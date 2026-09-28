@@ -1,0 +1,221 @@
+Training Dashboard — Contexte du projet
+
+Objectif
+
+Créer une application web personnelle dédiée au suivi de mon entraînement, principalement en course à pied et secondairement en vélo.
+
+L’application doit être pensée avant tout pour une utilisation quotidienne sur iPhone. Elle devra fonctionner comme une PWA installable sur l’écran d’accueil, avec une interface rapide, claire et adaptée au mobile.
+
+L’objectif à terme est de croiser automatiquement :
+
+* mon plan d’entraînement prévu ;
+* mes activités réellement effectuées, principalement via Strava ;
+* mes données de séances : distance, allure, fréquence cardiaque, intervalles, dénivelé, etc. ;
+* éventuellement mes sensations : fatigue, sommeil, jambes, RPE, commentaires ;
+* mon historique afin d’analyser l’évolution de mon entraînement.
+
+L’application est avant tout personnelle et mono-utilisateur. Il n’est donc pas nécessaire de concevoir dès le départ un produit SaaS ou un système complexe de gestion de plusieurs utilisateurs.
+
+Profil d’utilisation
+
+Je suis un coureur régulier avec un volume relativement important, généralement autour de 75–100 km par semaine, avec plusieurs footings et environ deux séances de qualité par semaine.
+
+Je pratique également régulièrement le vélo.
+
+Je veux donc davantage qu’un simple compteur de kilomètres : l’application doit être capable à terme de comprendre la structure d’une semaine et de mes séances.
+
+Exemples :
+
+* endurance fondamentale ;
+* sortie longue ;
+* tempo/seuil ;
+* 10 × 500 m ;
+* 4 × 2000 m ;
+* répétitions avec récupération ;
+* échauffement + blocs + retour au calme.
+
+Stack technique privilégiée
+
+Le projet doit privilégier une architecture moderne, propre et maintenable :
+
+* TypeScript
+* React
+* Next.js
+* PWA responsive/mobile-first
+* Git + GitHub pour le versionnement
+* Vercel pour le déploiement
+* éventuellement Supabase/PostgreSQL lorsque de la persistance serveur sera nécessaire.
+
+Éviter autant que possible de sur-complexifier l’architecture.
+
+Le code doit être lisible, typé, modulaire et facilement évolutif.
+
+Intégration Strava
+
+Strava sera la première source externe de données.
+
+L’application devra à terme utiliser l’API Strava avec OAuth afin de récupérer automatiquement mes activités.
+
+Les secrets OAuth et tokens sensibles ne doivent jamais être exposés dans le frontend ou dans le dépôt GitHub. Les opérations nécessitant des secrets doivent être réalisées côté serveur.
+
+Garmin pourra éventuellement être étudié ultérieurement, mais Strava est prioritaire.
+
+Fonctionnalités envisagées
+
+1. Dashboard
+
+La page principale doit donner immédiatement une vision de la semaine actuelle.
+
+Par exemple :
+
+* kilométrage effectué / kilométrage prévu ;
+* progression de la semaine ;
+* séance prévue aujourd’hui ;
+* prochaine séance importante ;
+* dernières activités ;
+* nombre de séances réalisées ;
+* répartition entraînement facile / qualité ;
+* éventuellement vélo et autres sports.
+
+2. Plan d’entraînement
+
+Permettre de représenter un plan semaine par semaine avec des séances structurées.
+
+Une séance doit pouvoir contenir plusieurs blocs.
+
+Exemple :
+
+4 × 2000 m @ 3’30–3’32/km, récupération 2 min
+
+avec éventuellement :
+
+* échauffement ;
+* éducatifs/lignes droites ;
+* répétitions ;
+* récupération ;
+* retour au calme.
+
+3. Croisement Plan ↔ Strava
+
+À terme, l’application devra pouvoir associer une activité Strava à une séance prévue.
+
+Exemple :
+
+Prévu
+4 × 2000 m @ 3’30–3’32/km
+
+Réalisé
+4 × 2000 m @ 3’31/km
+FC moyenne / maximale
+distance totale
+échauffement
+récupérations
+
+L’association pourra d’abord être manuelle, puis devenir semi-automatique ou automatique.
+
+4. Analyse des séances
+
+Pour les séances fractionnées, afficher les répétitions sous une forme facilement exploitable :
+
+Répétition	Temps	Allure	FC moyenne	FC max
+
+Pouvoir observer notamment :
+
+* régularité des répétitions ;
+* évolution de la fréquence cardiaque ;
+* dérive cardiaque ;
+* allure moyenne ;
+* volume réalisé à haute intensité.
+
+5. Historique et statistiques
+
+À terme :
+
+* volume sur 7 jours ;
+* volume sur 28 jours ;
+* volume hebdomadaire ;
+* évolution sur plusieurs mois ;
+* fréquence des séances qualitatives ;
+* D+ ;
+* temps d’entraînement ;
+* vélo ;
+* records et performances ;
+* évolution des allures/FC sur certaines séances comparables.
+
+L’objectif n’est pas de reproduire Strava, mais d’afficher les métriques réellement utiles au suivi de mon entraînement.
+
+6. Ressenti
+
+Possibilité d’ajouter rapidement après une séance :
+
+* RPE / difficulté ;
+* état des jambes ;
+* fatigue ;
+* sommeil ;
+* commentaire libre.
+
+Ces données pourront ensuite être comparées à la charge d’entraînement et aux performances.
+
+Développement progressif
+
+Le projet doit être construit progressivement plutôt que d’essayer de tout implémenter immédiatement.
+
+V0 — Dashboard local
+
+Créer d’abord une PWA propre et fonctionnelle avec :
+
+* semaine actuelle ;
+* plan prévu ;
+* séances ;
+* kilométrage prévu ;
+* interface mobile/iPhone.
+
+Pas besoin de Strava ou d’une base de données complexe à ce stade.
+
+V1 — Strava
+
+Ajouter :
+
+* authentification OAuth ;
+* récupération des activités ;
+* kilomètres réalisés ;
+* dernières sorties ;
+* statistiques élémentaires.
+
+V2 — Plan ↔ Réalisé
+
+Ajouter :
+
+* association activité ↔ séance ;
+* prévu vs réalisé ;
+* analyse des séances ;
+* historique.
+
+V3 — Analyse avancée
+
+Ajouter progressivement :
+
+* tendances de charge ;
+* graphiques ;
+* comparaison de séances ;
+* sensations ;
+* statistiques longitudinales ;
+* matériel/chaussures éventuellement.
+
+Philosophie du projet
+
+Privilégier :
+
+simplicité → utilité → fiabilité → automatisation
+
+avant d’ajouter de nombreuses fonctionnalités.
+
+Chaque fonctionnalité doit répondre à un besoin concret de suivi d’entraînement.
+
+L’application doit rester suffisamment modulaire pour ajouter de nouveaux modules plus tard sans devoir réécrire l’ensemble.
+
+Lorsqu’une décision technique importante doit être prise, privilégier une solution simple et maintenable plutôt qu’une architecture inutilement complexe.
+
+L’interface doit être pensée mobile-first, particulièrement pour iPhone, tout en restant agréable sur ordinateur.
+
+Le but final est d’obtenir progressivement un véritable dashboard personnel d’entraînement, adapté à ma pratique et à mon plan, plutôt qu’un clone générique de Strava.
