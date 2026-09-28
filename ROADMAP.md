@@ -17,33 +17,33 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 - [x] Définir les critères d'acceptation de la V0.
 - [x] Valider le modèle de `TrainingWeek`, `Workout` et `WorkoutBlock`.
-- [ ] Définir les premières données d'exemple réalistes.
+- [x] Définir les premières données d'exemple réalistes.
 - [x] Définir la navigation et les écrans essentiels.
 
 ### Socle technique
 
-- [ ] Initialiser Next.js avec TypeScript.
-- [ ] Configurer le lint et les scripts de vérification.
-- [ ] Mettre en place les styles globaux et les conventions UI.
-- [ ] Configurer le manifeste PWA, les icônes et les métadonnées.
+- [x] Initialiser Next.js avec TypeScript.
+- [x] Configurer le lint et les scripts de vérification.
+- [x] Mettre en place les styles globaux et les conventions UI.
+- [x] Configurer le manifeste PWA, les icônes et les métadonnées.
 
 ### Produit
 
-- [ ] Afficher la semaine actuelle.
-- [ ] Afficher le kilométrage prévu et sa répartition.
-- [ ] Afficher les séances prévues par jour.
-- [ ] Mettre en évidence la séance du jour et la prochaine séance importante.
-- [ ] Créer l'écran de détail d'une séance structurée.
+- [x] Afficher la semaine actuelle.
+- [x] Afficher le kilométrage prévu et sa répartition.
+- [x] Afficher les séances prévues par jour.
+- [x] Mettre en évidence la séance du jour et la prochaine séance importante.
+- [x] Créer l'écran de détail d'une séance structurée.
 - [ ] Assurer une expérience confortable sur iPhone.
-- [ ] Assurer un rendu cohérent sur ordinateur.
+- [x] Assurer un rendu cohérent sur ordinateur.
 
 ### Validation
 
-- [ ] Vérifier le typage, le lint et le build de production.
-- [ ] Tester les principaux formats de séance avec des données réalistes.
+- [x] Vérifier le typage, le lint et le build de production.
+- [x] Tester les principaux formats de séance avec des données réalistes.
 - [ ] Vérifier l'installation et l'affichage PWA sur iPhone.
 - [ ] Déployer la V0 sur Vercel.
-- [ ] Mettre à jour la documentation du dépôt.
+- [x] Mettre à jour la documentation du dépôt.
 
 ### Hors périmètre
 
@@ -98,5 +98,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Définir la semaine d'exemple réaliste, puis initialiser le socle Next.js et implémenter le dashboard local conformément à l'architecture validée.
+Finaliser la recette sur Safari iOS et l’installation sur l’écran d’accueil, puis déployer sur le compte Vercel choisi. L’implémentation locale est terminée ; la V0 reste en validation jusqu’à ces deux contrôles.
+
+Validation locale : lint, TypeScript, 7 tests métier et build réussis. Dashboard et détail contrôlés dans le navigateur à des largeurs de 320, 390 et 1280 px, sans débordement horizontal ; navigation et réponse 404 vérifiées. Ces contrôles Chromium ne remplacent pas un test sur iPhone réel. Aucun projet Vercel n’est lié au dépôt et aucun outil Vercel connecté n’est disponible dans cette session.
 

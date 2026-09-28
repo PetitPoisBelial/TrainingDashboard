@@ -2,7 +2,7 @@
 
 ## Statut
 
-Ce document décrit l'architecture initiale visée. Les décisions qui ne sont pas encore validées sont indiquées comme telles et ne doivent pas être considérées comme définitives.
+Ce document décrit l'architecture de la V0 implémentée. La validation sur iPhone réel et le déploiement Vercel restent à effectuer.
 
 ## Principes
 
@@ -249,7 +249,7 @@ Le choix définitif de la persistance pour les versions suivantes est différé.
 - Fournir un manifeste et les métadonnées d'installation.
 - Vérifier que l'application reste utilisable sur ordinateur.
 
-Le niveau de fonctionnement hors connexion requis pour la V0 reste à décider. L'installation PWA ne doit pas entraîner une stratégie de cache complexe prématurée.
+Le fonctionnement hors connexion est exclu de la V0. Aucun service worker n'est enregistré. Le manifeste et les icônes PNG (192, 512, maskable et Apple 180 px) permettent l'ajout à l'écran d'accueil, à valider sur iPhone réel via HTTPS.
 
 ## Intégration Strava future
 
@@ -263,12 +263,20 @@ L'intégration appartient à la V1. Elle devra respecter les règles suivantes :
 
 ## Qualité
 
-Les commandes exactes seront renseignées après l'initialisation du projet. Le socle devra au minimum permettre :
+Le socle utilise pnpm (lockfile versionné), Next.js 16.3.6, React 19.3 et TypeScript 5.9 strict. Commandes :
 
-- vérification TypeScript ;
-- lint ;
-- build de production ;
-- tests ciblés sur la logique métier lorsqu'elle devient non triviale.
+- `pnpm typecheck` : génération des types de routes puis TypeScript ;
+- `pnpm lint` : ESLint et règles Next.js ;
+- `pnpm build` : build de production ;
+- `pnpm test` : tests natifs Node exécutés avec tsx.
+
+ESLint est fixé à 9.39.5 : ESLint 10 provoque une erreur dans eslint-plugin-react fourni par la configuration Next.js actuelle. Réévaluer cette compatibilité lors d'une mise à jour. tsx est la seule dépendance supplémentaire de test, nécessaire pour exécuter directement les modules TypeScript.
+
+Le dashboard est rendu à chaque requête pour déterminer la date en Europe/Paris, sans date figée au build. Une page laissée ouverte au passage de minuit nécessite un rechargement. La prochaine séance clé inclut le jour courant, car la V0 ne connaît ni heure ni état de réalisation.
+
+La fixture est une semaine fixe du 28 septembre au 4 octobre 2026 : 92 km de course, 20 km de vélo et un vendredi de repos. Elle n'est pas déplacée automatiquement à chaque semaine ; une semaine absente est distinguée d'une semaine de repos. Les identifiants restent stables. Les récupérations des répétitions se placent uniquement entre les efforts.
+
+Les deux écrans utilisent des Server Components, des polices système et une feuille CSS commune pour cette petite V0. Aucun téléchargement de police, bibliothèque UI ou état global n'est nécessaire. Les icônes sont locales.
 
 ## Journal des décisions
 
@@ -283,4 +291,6 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-09-28 | Représenter `WorkoutBlock` par une union discriminée `segment` / `repeats` | Validée |
 | 2026-09-28 | Stocker les volumes dans des unités canoniques et dériver les agrégats avec des fonctions pures | Validée |
 | 2026-09-28 | Fournir une PWA installable sans imposer de fonctionnement hors connexion en V0 | Validée |
+| 2026-09-28 | Conserver une fixture datée et rendre la date Paris à chaque requête, pour distinguer absence de plan et repos | Validée |
+| 2026-09-28 | Utiliser pnpm et les tests Node avec tsx ; conserver ESLint 9 compatible avec les règles React actuelles | Validée |
 
