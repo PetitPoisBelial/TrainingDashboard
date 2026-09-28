@@ -15,10 +15,10 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 ### Cadrage
 
-- [ ] Définir les critères d'acceptation de la V0.
-- [ ] Valider le modèle de `TrainingWeek`, `Workout` et `WorkoutBlock`.
+- [x] Définir les critères d'acceptation de la V0.
+- [x] Valider le modèle de `TrainingWeek`, `Workout` et `WorkoutBlock`.
 - [ ] Définir les premières données d'exemple réalistes.
-- [ ] Définir la navigation et les écrans essentiels.
+- [x] Définir la navigation et les écrans essentiels.
 
 ### Socle technique
 
@@ -98,5 +98,5 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Définir le modèle métier minimal de la V0 et les critères précis permettant de considérer le dashboard local comme terminé.
+Définir la semaine d'exemple réaliste, puis initialiser le socle Next.js et implémenter le dashboard local conformément à l'architecture validée.
 
