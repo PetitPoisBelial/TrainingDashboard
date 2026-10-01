@@ -6,14 +6,15 @@ export const metadata: Metadata = {
   title: { default: "Training Dashboard", template: "%s · Training Dashboard" },
   description: "Votre semaine d’entraînement, simplement.",
   applicationName: "Training Dashboard",
-  appleWebApp: { capable: true, statusBarStyle: "default", title: "Training" },
+  appleWebApp: { capable: true, statusBarStyle: "black", title: "Training" },
   icons: { icon: "/icons/icon-192.png", apple: "/icons/apple-touch-icon.png" },
 };
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f5f5ef",
+  themeColor: "#0d1420",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

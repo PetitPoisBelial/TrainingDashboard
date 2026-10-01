@@ -25,6 +25,7 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - [x] Initialiser Next.js avec TypeScript.
 - [x] Configurer le lint et les scripts de vérification.
 - [x] Mettre en place les styles globaux et les conventions UI.
+- [x] Appliquer le thème sombre bleu nuit et champagne, avec repères sauge (29 septembre 2026).
 - [x] Configurer le manifeste PWA, les icônes et les métadonnées.
 
 ### Produit
@@ -36,6 +37,14 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - [x] Créer l'écran de détail d'une séance structurée.
 - [ ] Assurer une expérience confortable sur iPhone.
 - [x] Assurer un rendu cohérent sur ordinateur.
+
+### Navigation multi-page
+
+- [x] Concevoir le shell partagé, les sections principales et le comportement responsive du menu.
+- [ ] Implémenter une configuration de navigation unique et typée.
+- [ ] Ajouter la barre de navigation basse sur mobile et sa variante latérale sur ordinateur.
+- [ ] Ajouter les placeholders explicites Plan, Activités et Analyses.
+- [ ] Vérifier l'état actif, les liens directs, la navigation clavier et les safe areas iOS.
 
 ### Validation
 
@@ -98,7 +107,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Finaliser la recette sur Safari iOS et l’installation sur l’écran d’accueil, puis déployer sur le compte Vercel choisi. L’implémentation locale est terminée ; la V0 reste en validation jusqu’à ces deux contrôles.
+Implémenter le shell et la navigation multi-page conformément à l'architecture validée, puis reprendre la recette sur Safari iOS, l'installation sur l'écran d'accueil et le déploiement Vercel. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
 
-Validation locale : lint, TypeScript, 7 tests métier et build réussis. Dashboard et détail contrôlés dans le navigateur à des largeurs de 320, 390 et 1280 px, sans débordement horizontal ; navigation et réponse 404 vérifiées. Ces contrôles Chromium ne remplacent pas un test sur iPhone réel. Aucun projet Vercel n’est lié au dépôt et aucun outil Vercel connecté n’est disponible dans cette session.
+Validation locale avant l'ajout de la navigation multi-page : lint, TypeScript, 7 tests métier et build réussis. Dashboard et détail contrôlés dans le navigateur à des largeurs de 320, 390 et 1280 px, sans débordement horizontal ; navigation et réponse 404 vérifiées. Ces contrôles Chromium ne remplacent pas un test sur iPhone réel. Aucun projet Vercel n'est lié au dépôt et aucun outil Vercel connecté n'est disponible dans cette session.
 

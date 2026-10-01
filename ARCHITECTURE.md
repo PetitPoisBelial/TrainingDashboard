@@ -47,9 +47,20 @@ src/
 │   ├── page.tsx
 │   ├── manifest.ts
 │   ├── globals.css
+│   ├── plan/
+│   │   └── page.tsx
+│   ├── activities/
+│   │   └── page.tsx
+│   ├── insights/
+│   │   └── page.tsx
 │   └── workouts/
 │       └── [workoutId]/
 │           └── page.tsx
+├── components/
+│   └── app-shell/
+│       ├── app-shell.tsx
+│       ├── navigation-items.ts
+│       └── primary-navigation.tsx
 ├── features/
 │   └── training/
 │       ├── components/
@@ -65,7 +76,7 @@ src/
 
 Les Server Components sont utilisés par défaut. Un Client Component n'est ajouté que lorsqu'une interaction ou une API navigateur le justifie. Les données locales sont accessibles par une fonction simple, sans interface générique de repository. Un dossier `lib` ne sera créé que lorsqu'un besoin réellement transversal apparaîtra.
 
-La V0 n'introduit ni bibliothèque de composants, ni gestionnaire d'état global. Les fondations visuelles peuvent rester dans les styles globaux et les styles propres aux composants dans des CSS Modules.
+La V0 n'introduit ni bibliothèque de composants, ni gestionnaire d'état global. Les fondations visuelles peuvent rester dans les styles globaux et les styles propres aux composants dans des CSS Modules. Les dossiers de fonctionnalités futures ne sont créés que lorsqu'ils contiennent une première responsabilité métier réelle ; une page placeholder ne justifie pas à elle seule un module vide.
 
 ## Critères d'acceptation de la V0
 
@@ -79,6 +90,9 @@ La V0 n'introduit ni bibliothèque de composants, ni gestionnaire d'état global
 - La ou les séances du jour sont clairement identifiées.
 - La prochaine séance importante est mise en évidence.
 - Une séance ouvre une page de détail dédiée.
+- Un menu principal permet de naviguer entre Accueil, Plan, Activités et Analyses.
+- Le menu indique la section active et reste utilisable au clavier et avec un lecteur d'écran.
+- Les sections qui ne possèdent pas encore de fonctionnalité affichent un placeholder explicite plutôt qu'un écran vide.
 - Le détail restitue les blocs dans leur ordre : échauffement, travail principal, récupérations et retour au calme.
 - Une séance telle que `4 × 2000 m à 3'30–3'32/km, récupération 2 min` est représentée sans texte ambigu ni perte de structure.
 - Les données d'exemple couvrent au moins un footing facile, une séance d'intervalles, une séance tempo ou seuil, une sortie longue et un jour de repos.
@@ -104,13 +118,42 @@ La V0 n'introduit ni bibliothèque de composants, ni gestionnaire d'état global
 - Les calculs métier non triviaux sont couverts par des tests ciblés.
 - Le déploiement Vercel est fonctionnel.
 
-## Écrans essentiels
+## Écrans et navigation
+
+### Shell d'application
+
+Toutes les pages fonctionnelles partagent un shell fourni par le layout racine. Ce shell est responsable du cadre visuel général, de la zone de contenu et du menu principal. Il ne contient aucune logique métier liée à l'entraînement.
+
+Le menu utilise une seule configuration typée contenant, pour chaque section, son libellé, son chemin, son icône et ses éventuels chemins secondaires. Cette configuration alimente les variantes mobile et ordinateur afin d'éviter deux navigations divergentes.
+
+Le composant de navigation est le seul Client Component requis par le shell si la détection du chemin actif repose sur l'API de navigation du navigateur. Le layout et le contenu des pages restent des Server Components par défaut.
+
+### Comportement responsive du menu
+
+- Sur mobile, le menu principal est une barre fixe en bas, adaptée à l'utilisation à une main et aux safe areas iOS.
+- Sur ordinateur, les mêmes entrées sont présentées dans une barre latérale stable ou compacte.
+- La zone de contenu réserve l'espace nécessaire au menu afin qu'aucune information ne soit masquée.
+- Chaque destination reste un lien réel : le rechargement, les liens directs et les boutons précédent/suivant du navigateur fonctionnent normalement.
+- L'entrée active expose `aria-current="page"`, possède un libellé visible et conserve une zone tactile d'au moins 44 px.
+
+Une barre inférieure est préférée à un menu hamburger : avec quatre destinations principales, elle rend les sections immédiatement visibles et demande moins d'actions sur iPhone. Une navigation haute est écartée car elle est moins accessible à une main et s'adapte moins bien aux petits écrans.
+
+### Sections principales
+
+| Section | Route | Rôle en V0 |
+| --- | --- | --- |
+| Accueil | `/` | Dashboard hebdomadaire existant |
+| Plan | `/plan` | Placeholder pour la consultation future du plan |
+| Activités | `/activities` | Placeholder pour les activités futures |
+| Analyses | `/insights` | Placeholder pour les analyses futures |
+
+Les routes sont déclarées par des fichiers `page.tsx` explicites. Une route dynamique générique telle que `/[section]` est évitée : chaque section pourra ainsi acquérir son propre layout, ses métadonnées et ses dépendances sans condition centrale.
+
+Les placeholders partagent un petit composant de présentation, mais chaque page conserve son titre et son texte. Ils ne simulent aucune donnée et ne préfigurent pas les modèles métier futurs.
 
 ### Dashboard hebdomadaire — `/`
 
-Le dashboard affiche la période, le kilométrage de course prévu, les séances regroupées par jour, la séance du jour et la prochaine séance importante. Il permet d'accéder au détail de chaque séance.
-
-La V0 conserve une seule page verticale. Elle ne nécessite ni vue calendrier distincte, ni page de plan séparée, ni navigation par onglets.
+Le dashboard affiche la période, le kilométrage de course prévu, les séances regroupées par jour, la séance du jour et la prochaine séance importante. Il permet d'accéder au détail de chaque séance. Son contenu reste une page verticale ; l'ajout du menu global ne transforme pas le dashboard en ensemble d'onglets internes.
 
 ### Détail d'une séance — `/workouts/[workoutId]`
 
@@ -118,7 +161,9 @@ Cette page rappelle la date, le sport, la catégorie et le volume global. Elle a
 
 Une route dédiée est préférée à une modale afin de simplifier la navigation mobile, les liens directs et le rafraîchissement de la page.
 
-### Écrans exclus de la V0
+Le détail d'une séance reste dans le shell global. Sémantiquement, le chemin `/workouts/[workoutId]` appartient à la section Plan pour déterminer l'état actif du menu, même si la séance a été ouverte depuis l'Accueil.
+
+### Fonctionnalités exclues de la V0
 
 - création ou édition d'un plan ;
 - historique et statistiques ;
@@ -243,6 +288,8 @@ Le choix définitif de la persistance pour les versions suivantes est différé.
 
 ## PWA et responsive
 
+Le thème fixe « Bleu nuit & champagne » utilise des variables CSS communes : fond `#0D1420`, surfaces bleutées, texte clair `#E9EDF2`, accents champagne `#D6B778` et sauge `#91B5A0`. Le manifeste et les métadonnées navigateur suivent ce thème sombre. Le sélecteur de thème est différé.
+
 - Concevoir d'abord pour un écran d'iPhone.
 - Définir des zones tactiles confortables et une hiérarchie visuelle claire.
 - Gérer les safe areas iOS lorsque nécessaire.
@@ -293,4 +340,6 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-09-28 | Fournir une PWA installable sans imposer de fonctionnement hors connexion en V0 | Validée |
 | 2026-09-28 | Conserver une fixture datée et rendre la date Paris à chaque requête, pour distinguer absence de plan et repos | Validée |
 | 2026-09-28 | Utiliser pnpm et les tests Node avec tsx ; conserver ESLint 9 compatible avec les règles React actuelles | Validée |
+| 2026-10-01 | Introduire un shell partagé et quatre sections explicites avec navigation basse sur mobile et latérale sur ordinateur | Validée |
+| 2026-10-01 | Conserver des routes explicites et des placeholders sans créer prématurément les modules métier correspondants | Validée |
 
