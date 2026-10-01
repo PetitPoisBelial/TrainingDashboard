@@ -29,6 +29,12 @@ pnpm build
 
 Les tests couvrent les dates Paris, les frontières de semaine, les années bissextiles, le repos, plusieurs séances par jour, l'exclusion du vélo, les séances clés, les données absentes et les unités.
 
+## Navigation
+
+Le menu partagé propose **Accueil** (`/`), **Plan** (`/plan`), **Activités** (`/activities`) et **Analyses** (`/insights`). Il reste en bas sur mobile et devient latéral à partir de 1000 px. Le détail d'une séance active la section Plan. Les trois nouvelles sections affichent des pages d'attente explicites.
+
+Les liens s'ouvrent directement et le menu indique la section active. Pour la recette mobile, vérifier que les derniers éléments du contenu restent accessibles au-dessus du menu et de l'indicateur d'accueil iOS. Pour la recette clavier, vérifier les liens au Tab, leur focus visible, puis Entrée pour naviguer.
+
 ## Données locales
 
 Modifier `src/features/training/data/training-weeks.ts`. La semaine d'exemple du **28 septembre au 4 octobre 2026** contient 92 km de course et une sortie vélo de 20 km / 1 h. En dehors de cette période, l'accueil indique que le plan est absent ; les liens directs vers les séances restent accessibles.

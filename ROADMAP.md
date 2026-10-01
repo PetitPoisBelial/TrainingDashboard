@@ -41,9 +41,9 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 ### Navigation multi-page
 
 - [x] Concevoir le shell partagé, les sections principales et le comportement responsive du menu.
-- [ ] Implémenter une configuration de navigation unique et typée.
-- [ ] Ajouter la barre de navigation basse sur mobile et sa variante latérale sur ordinateur.
-- [ ] Ajouter les placeholders explicites Plan, Activités et Analyses.
+- [x] Implémenter une configuration de navigation unique et typée.
+- [x] Ajouter la barre de navigation basse sur mobile et sa variante latérale sur ordinateur.
+- [x] Ajouter les placeholders explicites Plan, Activités et Analyses.
 - [ ] Vérifier l'état actif, les liens directs, la navigation clavier et les safe areas iOS.
 
 ### Validation
@@ -107,7 +107,9 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Implémenter le shell et la navigation multi-page conformément à l'architecture validée, puis reprendre la recette sur Safari iOS, l'installation sur l'écran d'accueil et le déploiement Vercel. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
+Valider visuellement la navigation multi-page sur ordinateur et Safari iOS, y compris clavier, liens directs, précédent/suivant et safe areas. Reprendre ensuite l'installation sur l'écran d'accueil et le déploiement Vercel. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
+
+Validation du 1er octobre 2026 : lint, TypeScript, 10 tests (dont 3 sur la navigation) et build réussis. Les quatre sections et le détail répondent en HTTP 200 ; une séance inconnue répond en 404. Le contrôle interactif et visuel de cette nouvelle navigation reste à faire : le navigateur intégré a refusé les actions depuis sa page interne d'erreur de connexion. Les safe areas sont prises en compte dans le CSS, mais restent à vérifier sur appareil réel.
 
 Validation locale avant l'ajout de la navigation multi-page : lint, TypeScript, 7 tests métier et build réussis. Dashboard et détail contrôlés dans le navigateur à des largeurs de 320, 390 et 1280 px, sans débordement horizontal ; navigation et réponse 404 vérifiées. Ces contrôles Chromium ne remplacent pas un test sur iPhone réel. Aucun projet Vercel n'est lié au dépôt et aucun outil Vercel connecté n'est disponible dans cette session.
 

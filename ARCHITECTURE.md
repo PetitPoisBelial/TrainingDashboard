@@ -323,7 +323,9 @@ Le dashboard est rendu à chaque requête pour déterminer la date en Europe/Par
 
 La fixture est une semaine fixe du 28 septembre au 4 octobre 2026 : 92 km de course, 20 km de vélo et un vendredi de repos. Elle n'est pas déplacée automatiquement à chaque semaine ; une semaine absente est distinguée d'une semaine de repos. Les identifiants restent stables. Les récupérations des répétitions se placent uniquement entre les efforts.
 
-Les deux écrans utilisent des Server Components, des polices système et une feuille CSS commune pour cette petite V0. Aucun téléchargement de police, bibliothèque UI ou état global n'est nécessaire. Les icônes sont locales.
+Le shell partagé, les pages et les détails utilisent des Server Components. Seule la navigation principale est un Client Component, pour lire le chemin avec `usePathname`. Les liens et leurs chemins secondaires proviennent de `navigation-items.ts` ; la correspondance respecte les frontières de segments pour ne pas activer Plan sur `/planning`.
+
+Un seul menu change de disposition via CSS : barre fixe en bas sous 1000 px, barre latérale sticky à partir de 1000 px. Le contenu réserve 104 px plus la safe area basse sur mobile. Les styles du shell et des placeholders sont des CSS Modules ; les styles du dashboard et les variables du thème restent communs. Les icônes sont des SVG locaux décoratifs, accompagnés de libellés visibles. Aucun téléchargement de police, bibliothèque UI ou état global n'est nécessaire.
 
 ## Journal des décisions
 

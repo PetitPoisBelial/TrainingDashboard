@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
+import { AppShell } from "@/components/app-shell/app-shell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -23,31 +23,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
-        <a className="skip-link" href="#content">
-          Aller au contenu
-        </a>
-        <div className="shell">
-          <header className="site-header">
-            <Link
-              className="brand"
-              href="/"
-              aria-label="Training Dashboard — accueil"
-            >
-              <span className="brand-mark" aria-hidden="true">
-                ↗
-              </span>
-              <span>
-                training<span className="brand-light"> / dashboard</span>
-              </span>
-            </Link>
-            <span className="demo-badge">Plan de démonstration</span>
-          </header>
-          <main id="content">{children}</main>
-          <footer className="site-footer">
-            <span>Un jour après l’autre.</span>
-            <span>Données locales · V0</span>
-          </footer>
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

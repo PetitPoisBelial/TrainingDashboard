@@ -1,0 +1,40 @@
+.panel {
+  max-width: 680px;
+  padding: clamp(24px, 5vw, 40px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 24px;
+  border-radius: 12px;
+  color: var(--gold);
+  background: var(--gold-surface);
+}
+
+.badge {
+  display: inline-block;
+  color: var(--sage);
+  background: var(--green-surface);
+  font-size: 11px;
+  padding: 6px 10px;
+  border-radius: 20px;
+}
+
+.panel h2 {
+  font-size: 24px;
+  font-weight: 500;
+  margin: 16px 0 12px;
+}
+
+.panel p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
