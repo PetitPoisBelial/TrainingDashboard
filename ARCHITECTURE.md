@@ -382,7 +382,9 @@ La couche métier fournit uniquement les fonctions pures nécessaires pour :
 
 La V0 utilise des données locales ou mockées versionnées dans le dépôt.
 
-Le choix définitif de la persistance pour les versions suivantes est différé. Supabase/PostgreSQL est une option privilégiée, mais ne doit être ajouté qu'au moment où les besoins de stockage et de synchronisation sont suffisamment définis.
+La V1 devra synchroniser les plans et les modifications réalisées dans l'application entre ordinateur et iPhone. Ce besoin justifie une persistance serveur privée, tout en conservant un produit mono-utilisateur. La solution technique, le contrôle d'accès et la stratégie de sauvegarde restent à décider avant l'implémentation. Supabase/PostgreSQL demeure une option privilégiée, mais n'est pas encore validée.
+
+L'import et l'export utilisent un modèle `.xlsx`. Un import crée toujours un nouveau plan avec de nouveaux identifiants internes ; il ne fusionne pas les données et ne met pas à jour un plan existant. Après l'import, les données enregistrées dans l'application constituent la source de vérité. Un plan modifié peut être exporté, édité dans un tableur puis réimporté comme un nouveau plan indépendant.
 
 ## Déploiement Vercel
 
@@ -460,4 +462,7 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-02 | Localiser les routes avec les préfixes `/fr` et `/en`, mémoriser le choix par cookie et conserver le français par défaut | Implémentée localement |
 | 2026-10-02 | Utiliser des dictionnaires TypeScript côté serveur sans dépendance d'internationalisation en V0 | Implémentée localement |
 | 2026-10-02 | Lire la locale avec `next/root-params` et traduire uniquement les textes éditoriaux des fixtures connues | Implémentée localement |
+| 2026-10-02 | Insérer une V1 dédiée à la gestion des plans avant l'intégration Strava, désormais prévue en V2 | Validée |
+| 2026-10-02 | Synchroniser les plans via une persistance serveur privée entre ordinateur et iPhone, sans objectif multi-utilisateur | Validée, solution technique à choisir |
+| 2026-10-02 | Utiliser `.xlsx` pour l'import et l'export ; chaque import crée un nouveau plan sans fusion ni mise à jour | Validée |
 

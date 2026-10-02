@@ -78,12 +78,15 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 ### Objectif
 
-Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'entraînement. Un seul plan peut être actif à la fois et devient la source du dashboard et des autres pages concernées.
+Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'entraînement. Un seul plan peut être actif à la fois et devient la source du dashboard et des autres pages concernées. Les données et modifications réalisées dans l'application sont synchronisées entre ordinateur et iPhone.
 
 ### Cadrage
 
-- [ ] Définir le format du fichier modèle, ses champs obligatoires et fournir un exemple téléchargeable.
-- [ ] Choisir la persistance des plans et la stratégie de sauvegarde ou d'export.
+- [x] Retenir un fichier `.xlsx` comme format d'import et d'export de la V1.
+- [x] Décider qu'un import crée toujours un nouveau plan et ne met jamais à jour un plan existant.
+- [x] Exiger une persistance serveur privée et synchronisée entre ordinateur et iPhone, sans objectif multi-utilisateur.
+- [ ] Définir les feuilles, les champs obligatoires et les règles de validation du modèle `.xlsx`.
+- [ ] Choisir la solution technique de persistance, le contrôle d'accès et la stratégie de sauvegarde.
 - [ ] Définir le modèle métier minimal d'un plan, de ses semaines et de ses séances.
 - [ ] Séparer le statut temporel calculé (`planned`, `in-progress`, `finished`) de l'état d'activation choisi par l'utilisateur.
 - [ ] Définir les critères d'acceptation de la V1.
@@ -98,10 +101,19 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 
 ### Import
 
-- [ ] Permettre d'importer un plan depuis le fichier modèle.
+- [ ] Fournir un fichier modèle `.xlsx` accompagné d'un exemple réaliste.
+- [ ] Permettre d'importer un plan depuis le fichier modèle `.xlsx`.
 - [ ] Valider le fichier et présenter les erreurs de manière exploitable.
 - [ ] Afficher un aperçu avant de confirmer la création du plan.
 - [ ] Empêcher qu'un import invalide ou interrompu crée un plan partiel.
+- [ ] Avertir en cas de ressemblance avec un plan existant, tout en permettant la création volontaire d'une copie.
+
+### Export
+
+- [ ] Exporter un plan, avec toutes ses modifications, vers le format `.xlsx` de l'application.
+- [ ] Produire un fichier exporté lisible et modifiable dans un tableur courant.
+- [ ] Permettre de réimporter un fichier exporté comme un nouveau plan indépendant.
+- [ ] Générer de nouveaux identifiants internes lors de la réimportation afin de ne pas écraser le plan source.
 
 ### Activation et intégration
 
@@ -124,6 +136,8 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 - [ ] Vérifier les transitions de statut aux dates de début et de fin.
 - [ ] Vérifier que plusieurs plans peuvent coexister mais qu'un seul est actif.
 - [ ] Vérifier la persistance après fermeture et réouverture de la PWA.
+- [ ] Vérifier que les modifications réalisées sur ordinateur sont retrouvées sur iPhone, et inversement.
+- [ ] Vérifier qu'un export réimporté crée une copie complète sans modifier le plan source.
 - [ ] Tester l'import, l'édition, l'activation et la suppression sur iPhone.
 - [ ] Vérifier le typage, le lint, les tests et le build de production.
 
@@ -132,6 +146,7 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 - génération automatique d'un plan ;
 - collaboration et gestion multi-utilisateur ;
 - historique complet de toutes les modifications ;
+- fusion d'un fichier importé avec un plan existant ;
 - association avec des activités Strava ;
 - analyse avancée des performances.
 
@@ -179,7 +194,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Clore la V0 en vérifiant l'état actif, les liens directs, la navigation clavier et les safe areas iOS. Préparer ensuite la V1 en choisissant le format du fichier modèle et le mode de persistance des plans. Les pages Plan, Activités et Analyses restent des placeholders jusqu'au démarrage de cette version.
+Clore la V0 en vérifiant l'état actif, les liens directs, la navigation clavier et les safe areas iOS. Préparer ensuite la V1 en définissant précisément le modèle `.xlsx`, puis en choisissant la persistance serveur privée et le contrôle d'accès nécessaires à la synchronisation ordinateur/iPhone. Les pages Plan, Activités et Analyses restent des placeholders jusqu'au démarrage de cette version.
 
 Validation sur iPhone du 2 octobre 2026 : l'expérience générale, l'installation et l'affichage de la PWA ainsi que son lancement avec la langue mémorisée sont confirmés.
 
