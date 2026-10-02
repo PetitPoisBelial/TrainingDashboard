@@ -2,7 +2,7 @@
 
 ## Statut
 
-Ce document décrit l'architecture de la V0 implémentée. La validation sur iPhone réel et le déploiement Vercel restent à effectuer.
+Ce document décrit l'architecture de la V0 implémentée et déployée sur Vercel. La validation de l'installation et de l'usage sur iPhone réel reste à effectuer.
 
 ## Principes
 
@@ -286,6 +286,19 @@ La V0 utilise des données locales ou mockées versionnées dans le dépôt.
 
 Le choix définitif de la persistance pour les versions suivantes est différé. Supabase/PostgreSQL est une option privilégiée, mais ne doit être ajouté qu'au moment où les besoins de stockage et de synchronisation sont suffisamment définis.
 
+## Déploiement Vercel
+
+Le dépôt GitHub est connecté à Vercel avec `main` comme branche de production.
+
+- **Production** : <https://training-dashboard-snowy.vercel.app/> est l'URL stable destinée à l'installation sur l'iPhone.
+- **Preview** : les autres branches et les pull requests servent à tester les changements avant leur fusion.
+- Aucun workflow GitHub Actions, fichier `vercel.json`, secret ou variable d'environnement n'est nécessaire pour la V0.
+- Les mises à jour de `main` déclenchent un nouveau déploiement de production.
+
+La production V0 est publique et ne comporte pas d'authentification applicative. Ce choix est acceptable tant que l'application reste en lecture seule, n'affiche que des fixtures et ne contient aucune donnée personnelle ou sensible. L'URL ne constitue pas un contrôle d'accès. Avant l'introduction d'activités réelles, de ressentis, de commentaires ou de données issues d'une intégration externe, la stratégie d'accès devra être réévaluée.
+
+Les Preview peuvent utiliser la protection standard de Vercel indépendamment de la production. Cette protection relève de la plateforme et ne justifie pas l'ajout d'une authentification dans le code de la V0.
+
 ## PWA et responsive
 
 Le thème fixe « Bleu nuit & champagne » utilise des variables CSS communes : fond `#0D1420`, surfaces bleutées, texte clair `#E9EDF2`, accents champagne `#D6B778` et sauge `#91B5A0`. Le manifeste et les métadonnées navigateur suivent ce thème sombre. Le sélecteur de thème est différé.
@@ -344,4 +357,6 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-09-28 | Utiliser pnpm et les tests Node avec tsx ; conserver ESLint 9 compatible avec les règles React actuelles | Validée |
 | 2026-10-01 | Introduire un shell partagé et quatre sections explicites avec navigation basse sur mobile et latérale sur ordinateur | Validée |
 | 2026-10-01 | Conserver des routes explicites et des placeholders sans créer prématurément les modules métier correspondants | Validée |
+| 2026-10-02 | Utiliser `main` comme production Vercel stable et réserver les déploiements Preview aux branches et pull requests | Validée |
+| 2026-10-02 | Laisser la production V0 publique tant qu'elle ne contient que des fixtures non sensibles en lecture seule | Validée, à réévaluer avant les données réelles |
 
