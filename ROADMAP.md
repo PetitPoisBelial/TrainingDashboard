@@ -46,6 +46,16 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - [x] Ajouter les placeholders explicites Plan, Activités et Analyses.
 - [ ] Vérifier l'état actif, les liens directs, la navigation clavier et les safe areas iOS.
 
+### Internationalisation français / anglais
+
+- [x] Concevoir le routage localisé, les dictionnaires typés et la persistance du choix.
+- [ ] Déplacer les routes applicatives sous `app/[locale]/`.
+- [ ] Ajouter les dictionnaires français et anglais sans dépendance externe.
+- [ ] Ajouter le sélecteur `FR | EN` et mémoriser la préférence dans un cookie.
+- [ ] Traduire l'interface, les métadonnées et les contenus de démonstration.
+- [ ] Vérifier les redirections des anciennes URL et le lancement PWA.
+- [ ] Tester les deux langues, le formatage régional et la parité des dictionnaires.
+
 ### Validation
 
 - [x] Vérifier le typage, le lint et le build de production.
@@ -107,7 +117,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Installer la production Vercel sur l'écran d'accueil d'un iPhone, puis valider sur Safari iOS la navigation multi-page, les safe areas et le comportement standalone. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
+Implémenter l'internationalisation français / anglais conformément à l'architecture validée, puis redéployer la production. Installer ensuite la production Vercel sur l'écran d'accueil d'un iPhone et valider sur Safari iOS le changement de langue, la navigation multi-page, les safe areas et le comportement standalone. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
 
 Validation de production du 2 octobre 2026 : <https://training-dashboard-snowy.vercel.app/> répond correctement en HTTPS. Accueil, Plan, Activités, Analyses et le détail d'une séance ont été parcourus sur le déploiement ; les titres, les états actifs du menu et le rattachement du détail à Plan sont corrects. Le manifeste, la couleur de thème et les liens vers les icônes PWA sont présents dans les métadonnées. La validation finale de l'ajout à l'écran d'accueil reste à effectuer sur l'iPhone réel.
 

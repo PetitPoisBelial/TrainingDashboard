@@ -172,6 +172,95 @@ Le détail d'une séance reste dans le shell global. Sémantiquement, le chemin 
 - activités réalisées ;
 - intégrations externes.
 
+## Internationalisation français / anglais
+
+### Statut et périmètre
+
+L'ajout du français et de l'anglais est validé et reste à implémenter. Il concerne l'interface, la navigation, les métadonnées, les formats de dates et les contenus de démonstration. Il n'introduit ni traduction automatique ni gestion éditoriale complexe.
+
+Les locales applicatives sont limitées à :
+
+- `fr`, locale par défaut, formatée avec `fr-FR` ;
+- `en`, formatée avec `en-GB` afin de conserver les unités métriques et les conventions européennes.
+
+### Routage localisé
+
+La locale fait partie de l'URL et constitue la source de vérité :
+
+```text
+/fr
+/en
+/fr/plan
+/en/plan
+/fr/workouts/[workoutId]
+/en/workouts/[workoutId]
+```
+
+Les pages fonctionnelles seront regroupées sous `app/[locale]/`. Le paramètre dynamique est validé à l'exécution et toute valeur autre que `fr` ou `en` produit une réponse 404.
+
+Un `src/proxy.ts` redirige les chemins sans locale vers leur équivalent localisé. Il exclut les ressources internes Next.js, le manifeste, les icônes et les fichiers statiques. La racine `/` et les anciennes URL telles que `/plan` restent ainsi utilisables.
+
+La préférence est conservée dans un cookie non sensible. En l'absence de préférence, le français est utilisé. Aucune détection automatique via `Accept-Language` n'est nécessaire pour cette application personnelle.
+
+Le sélecteur remplace uniquement le segment de locale et conserve la page, l'identifiant de séance et les paramètres de navigation courants. Le changement utilise un remplacement d'historique afin de ne pas ajouter une entrée artificielle à chaque bascule de langue.
+
+### Dictionnaires typés
+
+Les traductions intégrées sont placées dans une couche dédiée :
+
+```text
+src/i18n/
+├── locales.ts
+├── get-dictionary.ts
+└── dictionaries/
+    ├── fr.ts
+    └── en.ts
+```
+
+Le dictionnaire français définit la structure de référence. Le dictionnaire anglais doit satisfaire le même type afin que toute clé manquante soit détectée par TypeScript. Les dictionnaires sont chargés côté serveur et seules les portions nécessaires aux composants interactifs sont transmises au client.
+
+Cette couche traduit :
+
+- les entrées de navigation et le shell ;
+- les titres, descriptions et états vides des pages ;
+- les libellés du dashboard ;
+- les catégories de séance et rôles des blocs ;
+- les jours, dates, durées, distances et allures ;
+- les métadonnées et textes d'accessibilité.
+
+Les titres, notes et commentaires saisis librement à l'avenir restent dans leur langue d'origine. Les textes éditoriaux des fixtures de démonstration peuvent être localisés dans la couche de données de démonstration, sans transformer les types du domaine entraînement en objets multilingues.
+
+### Composant de sélection
+
+Un composant partagé propose un choix explicite `FR | EN` :
+
+- dans la zone utilitaire de la barre latérale sur ordinateur ;
+- dans l'en-tête sur mobile, sans ajouter une cinquième destination au menu principal ;
+- avec un état courant perceptible visuellement et exposé aux technologies d'assistance.
+
+Seul ce sélecteur et la navigation nécessitent du code client. Les pages, dictionnaires et composants de contenu restent des Server Components par défaut.
+
+### PWA et métadonnées
+
+Le manifeste conserve un nom neutre et `start_url: "/"`. Au lancement de la PWA, la racine redirige vers la préférence mémorisée. La balise `lang` du document et les métadonnées des pages correspondent à la locale de l'URL.
+
+### Dépendances et seuil d'évolution
+
+Aucune bibliothèque d'internationalisation n'est ajoutée en V0. Deux locales et un volume réduit de textes peuvent être gérés avec les primitives de Next.js, des dictionnaires TypeScript et `Intl`.
+
+Une bibliothèque dédiée telle que `next-intl` ne sera réévaluée qu'en présence d'un besoin concret : nombreuses règles de pluriel, messages riches, nouvelles langues ou contribution de traducteurs externes.
+
+### Validation attendue
+
+- toutes les routes principales fonctionnent en français et en anglais ;
+- `/` redirige vers la préférence enregistrée ou vers `/fr` par défaut ;
+- le sélecteur conserve la route et les paramètres courants ;
+- `<html lang>` et les métadonnées correspondent à la locale ;
+- les dates utilisent `fr-FR` ou `en-GB` ;
+- les deux dictionnaires possèdent les mêmes clés ;
+- la navigation directe, précédent/suivant et le lancement PWA restent fonctionnels ;
+- le lint, la vérification TypeScript, les tests et le build de production réussissent.
+
 ## Modèle métier de la V0
 
 Le modèle utilise des objets TypeScript immuables et des fonctions pures. Il ne nécessite pas de classes.
@@ -359,4 +448,6 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-01 | Conserver des routes explicites et des placeholders sans créer prématurément les modules métier correspondants | Validée |
 | 2026-10-02 | Utiliser `main` comme production Vercel stable et réserver les déploiements Preview aux branches et pull requests | Validée |
 | 2026-10-02 | Laisser la production V0 publique tant qu'elle ne contient que des fixtures non sensibles en lecture seule | Validée, à réévaluer avant les données réelles |
+| 2026-10-02 | Localiser les routes avec les préfixes `/fr` et `/en`, mémoriser le choix par cookie et conserver le français par défaut | Validée, à implémenter |
+| 2026-10-02 | Utiliser des dictionnaires TypeScript côté serveur sans dépendance d'internationalisation en V0 | Validée, à implémenter |
 
