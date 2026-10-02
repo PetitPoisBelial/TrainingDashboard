@@ -49,11 +49,11 @@ La date courante est celle d'Europe/Paris, calculée côté serveur à chaque re
 
 Après déploiement HTTPS, ouvrir le site dans Safari, puis **Partager → Sur l'écran d'accueil**. Vérifier l'icône, le lancement autonome, les safe areas, le retour depuis une séance et l'absence de débordement en portrait/paysage. La connexion reste nécessaire : aucun cache hors ligne n'est prévu.
 
-Le manifeste, les icônes PNG et les métadonnées Apple sont présents. Les contrôles locaux ont été réalisés sous Chromium, pas sur Safari iOS réel.
+La V0 est clôturée : l'installation et l'affichage PWA sur iPhone, la langue mémorisée, les liens, la navigation clavier et les safe areas ont été validés. Les contrôles locaux sous Chromium complètent cette recette sur appareil réel.
 
 ## Vercel
 
-Le dépôt est lié à Vercel : [production](https://training-dashboard-snowy.vercel.app/), branche `main`. Les autres branches produisent des Preview. Installation : `pnpm install --frozen-lockfile` ; build : `pnpm build`. Aucun secret ni variable d'environnement n'est nécessaire pour cette V0. L'internationalisation implémentée localement reste à redéployer.
+Le dépôt est lié à Vercel : [production](https://training-dashboard-snowy.vercel.app/), branche `main`. Les autres branches produisent des Preview. Installation : `pnpm install --frozen-lockfile` ; build : `pnpm build`. Aucun secret ni variable d'environnement n'est nécessaire pour cette V0. La navigation et l'internationalisation sont déployées.
 
 Après redéploiement, vérifier `/fr` et `/en`, `/en/workouts/2026-09-29-intervalles`, une séance inconnue (404), `/manifest.webmanifest`, le changement de langue et l'installation iPhone.
 

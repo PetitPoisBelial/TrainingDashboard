@@ -9,6 +9,8 @@
 
 ## V0 — Dashboard local
 
+**Statut : clôturée.** La recette finale des liens, de la navigation clavier et des safe areas a été confirmée par l'utilisateur. L'état actif du menu, le déploiement, l'installation PWA et le choix de langue étaient déjà validés.
+
 ### Objectif
 
 Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et les séances prévues à partir de données locales.
@@ -44,7 +46,7 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - [x] Implémenter une configuration de navigation unique et typée.
 - [x] Ajouter la barre de navigation basse sur mobile et sa variante latérale sur ordinateur.
 - [x] Ajouter les placeholders explicites Plan, Activités et Analyses.
-- [ ] Vérifier l'état actif, les liens directs, la navigation clavier et les safe areas iOS.
+- [x] Vérifier l'état actif, les liens directs, la navigation clavier et les safe areas iOS.
 
 ### Internationalisation français / anglais
 
@@ -194,7 +196,9 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Clore la V0 en vérifiant l'état actif, les liens directs, la navigation clavier et les safe areas iOS. Préparer ensuite la V1 en définissant précisément le modèle `.xlsx`, puis en choisissant la persistance serveur privée et le contrôle d'accès nécessaires à la synchronisation ordinateur/iPhone. Les pages Plan, Activités et Analyses restent des placeholders jusqu'au démarrage de cette version.
+La V0 est clôturée. Le prochain jalon est le cadrage de la V1 : définir précisément le modèle `.xlsx`, puis choisir la persistance serveur privée et le contrôle d'accès nécessaires à la synchronisation ordinateur/iPhone. Les pages Plan, Activités et Analyses restent des placeholders jusqu'à leur implémentation dans une phase ultérieure.
+
+Recette finale confirmée par l'utilisateur : liens, navigation clavier et safe areas vérifiés. Cette validation complète les contrôles techniques, de production et sur iPhone ci-dessous et clôture la V0.
 
 Validation sur iPhone du 2 octobre 2026 : l'expérience générale, l'installation et l'affichage de la PWA ainsi que son lancement avec la langue mémorisée sont confirmés.
 
@@ -202,7 +206,7 @@ Validation locale de l'internationalisation du 2 octobre 2026 : lint, TypeScript
 
 Validation de production du 2 octobre 2026 : <https://training-dashboard-snowy.vercel.app/> répond correctement en HTTPS. Accueil, Plan, Activités, Analyses et le détail d'une séance ont été parcourus sur le déploiement ; les titres, les états actifs du menu et le rattachement du détail à Plan sont corrects. Le manifeste, la couleur de thème et les liens vers les icônes PWA sont présents dans les métadonnées. L'ajout à l'écran d'accueil et l'affichage standalone ont ensuite été validés sur iPhone réel.
 
-Validation du 1er octobre 2026 : lint, TypeScript, 10 tests (dont 3 sur la navigation) et build réussis. Les quatre sections et le détail répondent en HTTP 200 ; une séance inconnue répond en 404. Le contrôle interactif et visuel de cette nouvelle navigation reste à faire : le navigateur intégré a refusé les actions depuis sa page interne d'erreur de connexion. Les safe areas sont prises en compte dans le CSS, mais restent à vérifier sur appareil réel.
+Validation du 1er octobre 2026 : lint, TypeScript, 10 tests (dont 3 sur la navigation) et build réussis. Les quatre sections et le détail répondent en HTTP 200 ; une séance inconnue répond en 404. À cette date, le contrôle interactif et visuel restait à faire : le navigateur intégré avait refusé les actions depuis sa page interne d'erreur de connexion. Ces points ont depuis été validés, y compris les safe areas lors de la recette finale.
 
 Validation locale avant l'ajout de la navigation multi-page : lint, TypeScript, 7 tests métier et build réussis. Dashboard et détail contrôlés dans le navigateur à des largeurs de 320, 390 et 1280 px, sans débordement horizontal ; navigation et réponse 404 vérifiées. Ces contrôles Chromium ne remplacent pas un test sur iPhone réel.
 

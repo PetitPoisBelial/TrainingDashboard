@@ -80,7 +80,7 @@ Le code doit rester typé, lisible, modulaire et maintenable. Une solution simpl
 
 ## Phase actuelle
 
-Le projet se trouve en **V0 — Dashboard local**.
+La **V0 — Dashboard local** est terminée et validée. Le prochain jalon est le **cadrage de la V1 — Gestion des plans**, détaillé dans `ROADMAP.md`.
 
-La V0 doit fournir une application utilisable avec des données locales ou mockées : semaine actuelle, séances prévues, kilométrage prévu, détail d'une séance et expérience mobile/PWA. Strava et une base de données serveur ne font pas partie de cette phase.
+La V0 fournit une application utilisable avec des données locales ou mockées : semaine actuelle, séances prévues, kilométrage prévu, détail d'une séance et expérience mobile/PWA en français et en anglais. La V1 prévoit la gestion de plusieurs plans, l'import/export `.xlsx` et une persistance privée synchronisée entre ordinateur et iPhone. Ses choix techniques restent à définir avant implémentation ; Strava est prévu en V2.
 

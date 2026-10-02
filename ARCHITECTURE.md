@@ -2,7 +2,7 @@
 
 ## Statut
 
-Ce document décrit l'architecture de la V0. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. La recette détaillée de la navigation et des safe areas reste à clôturer.
+La V0 est clôturée. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. L'utilisateur a confirmé la recette finale des liens, de la navigation clavier et des safe areas. Le prochain jalon est le cadrage de la V1 — Gestion des plans ; les choix de persistance et de contrôle d'accès restent à définir.
 
 ## Principes
 
@@ -459,9 +459,9 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-01 | Conserver des routes explicites et des placeholders sans créer prématurément les modules métier correspondants | Validée |
 | 2026-10-02 | Utiliser `main` comme production Vercel stable et réserver les déploiements Preview aux branches et pull requests | Validée |
 | 2026-10-02 | Laisser la production V0 publique tant qu'elle ne contient que des fixtures non sensibles en lecture seule | Validée, à réévaluer avant les données réelles |
-| 2026-10-02 | Localiser les routes avec les préfixes `/fr` et `/en`, mémoriser le choix par cookie et conserver le français par défaut | Implémentée localement |
-| 2026-10-02 | Utiliser des dictionnaires TypeScript côté serveur sans dépendance d'internationalisation en V0 | Implémentée localement |
-| 2026-10-02 | Lire la locale avec `next/root-params` et traduire uniquement les textes éditoriaux des fixtures connues | Implémentée localement |
+| 2026-10-02 | Localiser les routes avec les préfixes `/fr` et `/en`, mémoriser le choix par cookie et conserver le français par défaut | Implémentée et déployée |
+| 2026-10-02 | Utiliser des dictionnaires TypeScript côté serveur sans dépendance d'internationalisation en V0 | Implémentée et déployée |
+| 2026-10-02 | Lire la locale avec `next/root-params` et traduire uniquement les textes éditoriaux des fixtures connues | Implémentée et déployée |
 | 2026-10-02 | Insérer une V1 dédiée à la gestion des plans avant l'intégration Strava, désormais prévue en V2 | Validée |
 | 2026-10-02 | Synchroniser les plans via une persistance serveur privée entre ordinateur et iPhone, sans objectif multi-utilisateur | Validée, solution technique à choisir |
 | 2026-10-02 | Utiliser `.xlsx` pour l'import et l'export ; chaque import crée un nouveau plan sans fusion ni mise à jour | Validée |

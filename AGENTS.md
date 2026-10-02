@@ -10,7 +10,7 @@ Avant toute modification importante, lire :
 2. `ARCHITECTURE.md` pour les choix techniques actuels ;
 3. `ROADMAP.md` pour la phase et la priorité en cours.
 
-La phase actuelle est la **V0 — Dashboard local**.
+La **V0 — Dashboard local** est clôturée. Le prochain jalon est le **cadrage de la V1 — Gestion des plans**, conformément à `ROADMAP.md`. La persistance privée, le contrôle d'accès et le modèle `.xlsx` doivent être définis avant leur implémentation. Strava reste prévu en V2.
 
 ## Principes de travail
 
