@@ -74,7 +74,68 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - analytics avancés ;
 - synchronisation Garmin.
 
-## V1 — Strava
+## V1 — Gestion des plans
+
+### Objectif
+
+Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'entraînement. Un seul plan peut être actif à la fois et devient la source du dashboard et des autres pages concernées.
+
+### Cadrage
+
+- [ ] Définir le format du fichier modèle, ses champs obligatoires et fournir un exemple téléchargeable.
+- [ ] Choisir la persistance des plans et la stratégie de sauvegarde ou d'export.
+- [ ] Définir le modèle métier minimal d'un plan, de ses semaines et de ses séances.
+- [ ] Séparer le statut temporel calculé (`planned`, `in-progress`, `finished`) de l'état d'activation choisi par l'utilisateur.
+- [ ] Définir les critères d'acceptation de la V1.
+
+### Liste et consultation
+
+- [ ] Remplacer le placeholder Plan par une liste des plans importés.
+- [ ] Afficher pour chaque plan son nom, ses dates, son statut temporel et son état actif ou inactif.
+- [ ] Conserver les plans terminés dans la liste et permettre de les consulter.
+- [ ] Ajouter une page de détail donnant accès aux semaines et aux séances d'un plan.
+- [ ] Prévoir des états explicites lorsqu'aucun plan n'existe ou qu'aucun plan n'est actif.
+
+### Import
+
+- [ ] Permettre d'importer un plan depuis le fichier modèle.
+- [ ] Valider le fichier et présenter les erreurs de manière exploitable.
+- [ ] Afficher un aperçu avant de confirmer la création du plan.
+- [ ] Empêcher qu'un import invalide ou interrompu crée un plan partiel.
+
+### Activation et intégration
+
+- [ ] Permettre d'activer un plan depuis la liste ou son détail.
+- [ ] Demander confirmation avant de remplacer un plan déjà actif.
+- [ ] Désactiver l'ancien plan et activer le nouveau comme une seule opération cohérente.
+- [ ] Alimenter le dashboard et les pages concernées à partir du plan actif.
+- [ ] Indiquer clairement le plan actif et gérer le cas où aucun plan n'est actif.
+
+### Édition et suppression
+
+- [ ] Modifier le nom, les dates et les informations générales d'un plan.
+- [ ] Ajouter, modifier, déplacer ou supprimer une séance et ses blocs structurés.
+- [ ] Mettre à jour les jours, les volumes prévus et les totaux dérivés après une modification.
+- [ ] Permettre la suppression d'un plan avec une confirmation explicite.
+- [ ] Signaler clairement l'impact de la suppression du plan actif sur le dashboard.
+
+### Validation
+
+- [ ] Vérifier les transitions de statut aux dates de début et de fin.
+- [ ] Vérifier que plusieurs plans peuvent coexister mais qu'un seul est actif.
+- [ ] Vérifier la persistance après fermeture et réouverture de la PWA.
+- [ ] Tester l'import, l'édition, l'activation et la suppression sur iPhone.
+- [ ] Vérifier le typage, le lint, les tests et le build de production.
+
+### Hors périmètre initial
+
+- génération automatique d'un plan ;
+- collaboration et gestion multi-utilisateur ;
+- historique complet de toutes les modifications ;
+- association avec des activités Strava ;
+- analyse avancée des performances.
+
+## V2 — Strava
 
 ### Objectif
 
@@ -88,7 +149,7 @@ Importer les activités réalisées et enrichir le dashboard avec les premières
 - [ ] Ajouter des statistiques élémentaires.
 - [ ] Gérer les erreurs, expirations de jetons et synchronisations partielles.
 
-## V2 — Plan et réalisé
+## V3 — Plan et réalisé
 
 ### Objectif
 
@@ -101,7 +162,7 @@ Comparer une séance prévue à l'activité réellement effectuée.
 - [ ] Ajouter un historique des séances.
 - [ ] Étudier un matching semi-automatique, puis automatique.
 
-## V3 — Analyse avancée
+## V4 — Analyse avancée
 
 ### Objectif
 
@@ -118,11 +179,13 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Redéployer la production avec l'internationalisation français / anglais implémentée localement. Installer ensuite la production Vercel sur l'écran d'accueil d'un iPhone et valider sur Safari iOS le changement de langue, la navigation multi-page, les safe areas et le comportement standalone. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
+Clore la V0 en vérifiant l'état actif, les liens directs, la navigation clavier et les safe areas iOS. Préparer ensuite la V1 en choisissant le format du fichier modèle et le mode de persistance des plans. Les pages Plan, Activités et Analyses restent des placeholders jusqu'au démarrage de cette version.
 
-Validation locale de l'internationalisation du 2 octobre 2026 : lint, TypeScript, 16 tests et build réussis. Les 22 contrôles HTTP sur le build de production local couvrent les dix pages FR/EN, les anciennes URL avec préférence et paramètres, les erreurs 404, le manifeste et les icônes. Dans Chromium, la bascule conserve la séance, les paramètres et l'ancre ; le choix est réutilisé à l'ouverture de `/`, et précédent/suivant conservent un historique cohérent. Les textes et l'attribut `lang` des erreurs sont corrects dans le navigateur. Les boutons de langue mesurent 44 × 44 px ; dashboard et détail contrôlés à 320, 390 et 1280 px sans débordement horizontal. Le sélecteur latéral fonctionne au clavier. Cette version n'a pas encore été redéployée et ces contrôles ne remplacent pas une recette Safari iOS ou une installation PWA réelle.
+Validation sur iPhone du 2 octobre 2026 : l'expérience générale, l'installation et l'affichage de la PWA ainsi que son lancement avec la langue mémorisée sont confirmés.
 
-Validation de production du 2 octobre 2026 : <https://training-dashboard-snowy.vercel.app/> répond correctement en HTTPS. Accueil, Plan, Activités, Analyses et le détail d'une séance ont été parcourus sur le déploiement ; les titres, les états actifs du menu et le rattachement du détail à Plan sont corrects. Le manifeste, la couleur de thème et les liens vers les icônes PWA sont présents dans les métadonnées. La validation finale de l'ajout à l'écran d'accueil reste à effectuer sur l'iPhone réel.
+Validation locale de l'internationalisation du 2 octobre 2026 : lint, TypeScript, 16 tests et build réussis. Les 22 contrôles HTTP sur le build de production local couvrent les dix pages FR/EN, les anciennes URL avec préférence et paramètres, les erreurs 404, le manifeste et les icônes. Dans Chromium, la bascule conserve la séance, les paramètres et l'ancre ; le choix est réutilisé à l'ouverture de `/`, et précédent/suivant conservent un historique cohérent. Les textes et l'attribut `lang` des erreurs sont corrects dans le navigateur. Les boutons de langue mesurent 44 × 44 px ; dashboard et détail contrôlés à 320, 390 et 1280 px sans débordement horizontal. Le sélecteur latéral fonctionne au clavier. Ces contrôles ont depuis été complétés par la validation PWA sur iPhone réel décrite ci-dessus.
+
+Validation de production du 2 octobre 2026 : <https://training-dashboard-snowy.vercel.app/> répond correctement en HTTPS. Accueil, Plan, Activités, Analyses et le détail d'une séance ont été parcourus sur le déploiement ; les titres, les états actifs du menu et le rattachement du détail à Plan sont corrects. Le manifeste, la couleur de thème et les liens vers les icônes PWA sont présents dans les métadonnées. L'ajout à l'écran d'accueil et l'affichage standalone ont ensuite été validés sur iPhone réel.
 
 Validation du 1er octobre 2026 : lint, TypeScript, 10 tests (dont 3 sur la navigation) et build réussis. Les quatre sections et le détail répondent en HTTP 200 ; une séance inconnue répond en 404. Le contrôle interactif et visuel de cette nouvelle navigation reste à faire : le navigateur intégré a refusé les actions depuis sa page interne d'erreur de connexion. Les safe areas sont prises en compte dans le CSS, mais restent à vérifier sur appareil réel.
 

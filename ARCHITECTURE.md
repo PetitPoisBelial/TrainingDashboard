@@ -2,7 +2,7 @@
 
 ## Statut
 
-Ce document décrit l'architecture de la V0. La navigation est déployée sur Vercel ; l'internationalisation est implémentée localement et reste à redéployer. La validation de l'installation et de l'usage sur iPhone réel reste à effectuer.
+Ce document décrit l'architecture de la V0. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. La recette détaillée de la navigation et des safe areas reste à clôturer.
 
 ## Principes
 
@@ -407,11 +407,11 @@ Le thème fixe « Bleu nuit & champagne » utilise des variables CSS communes : 
 - Fournir un manifeste et les métadonnées d'installation.
 - Vérifier que l'application reste utilisable sur ordinateur.
 
-Le fonctionnement hors connexion est exclu de la V0. Aucun service worker n'est enregistré. Le manifeste et les icônes PNG (192, 512, maskable et Apple 180 px) permettent l'ajout à l'écran d'accueil, à valider sur iPhone réel via HTTPS.
+Le fonctionnement hors connexion est exclu de la V0. Aucun service worker n'est enregistré. Le manifeste et les icônes PNG (192, 512, maskable et Apple 180 px) permettent l'ajout à l'écran d'accueil, validé sur iPhone réel via HTTPS.
 
 ## Intégration Strava future
 
-L'intégration appartient à la V1. Elle devra respecter les règles suivantes :
+L'intégration appartient à la V2, après la gestion des plans prévue en V1. Elle devra respecter les règles suivantes :
 
 - OAuth traité côté serveur ;
 - secrets uniquement dans des variables d'environnement sécurisées ;
