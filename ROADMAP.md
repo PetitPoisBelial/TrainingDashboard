@@ -35,7 +35,7 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - [x] Afficher les séances prévues par jour.
 - [x] Mettre en évidence la séance du jour et la prochaine séance importante.
 - [x] Créer l'écran de détail d'une séance structurée.
-- [ ] Assurer une expérience confortable sur iPhone.
+- [x] Assurer une expérience confortable sur iPhone.
 - [x] Assurer un rendu cohérent sur ordinateur.
 
 ### Navigation multi-page
@@ -54,14 +54,14 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 - [x] Ajouter le sélecteur `FR | EN` et mémoriser la préférence dans un cookie.
 - [x] Traduire l'interface, les métadonnées et les contenus de démonstration.
 - [x] Vérifier les redirections des anciennes URL, la préférence et les ressources PWA en local.
-- [ ] Vérifier le lancement PWA avec la langue mémorisée sur iPhone réel.
+- [x] Vérifier le lancement PWA avec la langue mémorisée sur iPhone réel.
 - [x] Tester les deux langues, le formatage régional et la parité des dictionnaires.
 
 ### Validation
 
 - [x] Vérifier le typage, le lint et le build de production.
 - [x] Tester les principaux formats de séance avec des données réalistes.
-- [ ] Vérifier l'installation et l'affichage PWA sur iPhone.
+- [x] Vérifier l'installation et l'affichage PWA sur iPhone.
 - [x] Déployer la V0 sur Vercel.
 - [x] Mettre à jour la documentation du dépôt.
 
