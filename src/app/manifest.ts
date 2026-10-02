@@ -4,8 +4,6 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "Training Dashboard",
     short_name: "Training",
-    description: "Votre semaine d’entraînement, simplement.",
-    lang: "fr",
     start_url: "/",
     scope: "/",
     display: "standalone",

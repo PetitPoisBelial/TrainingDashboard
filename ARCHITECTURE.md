@@ -2,7 +2,7 @@
 
 ## Statut
 
-Ce document décrit l'architecture de la V0 implémentée et déployée sur Vercel. La validation de l'installation et de l'usage sur iPhone réel reste à effectuer.
+Ce document décrit l'architecture de la V0. La navigation est déployée sur Vercel ; l'internationalisation est implémentée localement et reste à redéployer. La validation de l'installation et de l'usage sur iPhone réel reste à effectuer.
 
 ## Principes
 
@@ -43,24 +43,31 @@ La structure initiale recommandée est :
 ```text
 src/
 ├── app/
-│   ├── layout.tsx
-│   ├── page.tsx
 │   ├── manifest.ts
 │   ├── globals.css
-│   ├── plan/
-│   │   └── page.tsx
-│   ├── activities/
-│   │   └── page.tsx
-│   ├── insights/
-│   │   └── page.tsx
-│   └── workouts/
-│       └── [workoutId]/
-│           └── page.tsx
+│   └── [locale]/
+│       ├── layout.tsx
+│       ├── page.tsx
+│       ├── not-found.tsx
+│       ├── [...missing]/page.tsx
+│       ├── plan/page.tsx
+│       ├── activities/page.tsx
+│       ├── insights/page.tsx
+│       └── workouts/[workoutId]/page.tsx
+├── proxy.ts
+├── i18n/
+│   ├── locales.ts
+│   ├── request-locale.ts
+│   ├── get-dictionary.ts
+│   └── dictionaries/
+│       ├── fr.ts
+│       └── en.ts
 ├── components/
 │   └── app-shell/
 │       ├── app-shell.tsx
 │       ├── navigation-items.ts
-│       └── primary-navigation.tsx
+│       ├── primary-navigation.tsx
+│       └── language-switcher.tsx
 ├── features/
 │   └── training/
 │       ├── components/
@@ -126,7 +133,7 @@ Toutes les pages fonctionnelles partagent un shell fourni par le layout racine. 
 
 Le menu utilise une seule configuration typée contenant, pour chaque section, son libellé, son chemin, son icône et ses éventuels chemins secondaires. Cette configuration alimente les variantes mobile et ordinateur afin d'éviter deux navigations divergentes.
 
-Le composant de navigation est le seul Client Component requis par le shell si la détection du chemin actif repose sur l'API de navigation du navigateur. Le layout et le contenu des pages restent des Server Components par défaut.
+La navigation et le sélecteur de langue sont les seuls Client Components du shell. Le layout et le contenu des pages restent des Server Components.
 
 ### Comportement responsive du menu
 
@@ -142,26 +149,26 @@ Une barre inférieure est préférée à un menu hamburger : avec quatre destina
 
 | Section | Route | Rôle en V0 |
 | --- | --- | --- |
-| Accueil | `/` | Dashboard hebdomadaire existant |
-| Plan | `/plan` | Placeholder pour la consultation future du plan |
-| Activités | `/activities` | Placeholder pour les activités futures |
-| Analyses | `/insights` | Placeholder pour les analyses futures |
+| Accueil | `/[locale]` | Dashboard hebdomadaire existant |
+| Plan | `/[locale]/plan` | Placeholder pour la consultation future du plan |
+| Activités | `/[locale]/activities` | Placeholder pour les activités futures |
+| Analyses | `/[locale]/insights` | Placeholder pour les analyses futures |
 
 Les routes sont déclarées par des fichiers `page.tsx` explicites. Une route dynamique générique telle que `/[section]` est évitée : chaque section pourra ainsi acquérir son propre layout, ses métadonnées et ses dépendances sans condition centrale.
 
 Les placeholders partagent un petit composant de présentation, mais chaque page conserve son titre et son texte. Ils ne simulent aucune donnée et ne préfigurent pas les modèles métier futurs.
 
-### Dashboard hebdomadaire — `/`
+### Dashboard hebdomadaire — `/[locale]`
 
 Le dashboard affiche la période, le kilométrage de course prévu, les séances regroupées par jour, la séance du jour et la prochaine séance importante. Il permet d'accéder au détail de chaque séance. Son contenu reste une page verticale ; l'ajout du menu global ne transforme pas le dashboard en ensemble d'onglets internes.
 
-### Détail d'une séance — `/workouts/[workoutId]`
+### Détail d'une séance — `/[locale]/workouts/[workoutId]`
 
 Cette page rappelle la date, le sport, la catégorie et le volume global. Elle affiche les blocs dans l'ordre, formate les distances, durées, répétitions et allures, présente les consignes éventuelles et propose un retour simple vers la semaine.
 
 Une route dédiée est préférée à une modale afin de simplifier la navigation mobile, les liens directs et le rafraîchissement de la page.
 
-Le détail d'une séance reste dans le shell global. Sémantiquement, le chemin `/workouts/[workoutId]` appartient à la section Plan pour déterminer l'état actif du menu, même si la séance a été ouverte depuis l'Accueil.
+Le détail d'une séance reste dans le shell global. Sémantiquement, le chemin `/[locale]/workouts/[workoutId]` appartient à la section Plan pour déterminer l'état actif du menu, même si la séance a été ouverte depuis l'Accueil.
 
 ### Fonctionnalités exclues de la V0
 
@@ -176,7 +183,7 @@ Le détail d'une séance reste dans le shell global. Sémantiquement, le chemin 
 
 ### Statut et périmètre
 
-L'ajout du français et de l'anglais est validé et reste à implémenter. Il concerne l'interface, la navigation, les métadonnées, les formats de dates et les contenus de démonstration. Il n'introduit ni traduction automatique ni gestion éditoriale complexe.
+Le français et l'anglais sont implémentés localement. Ils couvrent l'interface, la navigation, les métadonnées, les formats de dates et les contenus de démonstration. Ils n'introduisent ni traduction automatique ni gestion éditoriale complexe.
 
 Les locales applicatives sont limitées à :
 
@@ -196,11 +203,13 @@ La locale fait partie de l'URL et constitue la source de vérité :
 /en/workouts/[workoutId]
 ```
 
-Les pages fonctionnelles seront regroupées sous `app/[locale]/`. Le paramètre dynamique est validé à l'exécution et toute valeur autre que `fr` ou `en` produit une réponse 404.
+Les pages fonctionnelles sont regroupées sous `app/[locale]/`. Les pages valident le paramètre dynamique à l'exécution et toute valeur autre que `fr` ou `en` produit une réponse 404. Le layout racine conserve le shell français pour les erreurs de locale invalide. Une route de secours `[...missing]` rend les URL inconnues avec l'état 404 traduit ; elle ne sert aucune section métier.
+
+La locale est lue côté serveur via `next/root-params`, l'API générée de Next.js 16.3 pour les paramètres situés avant le layout racine. Aucun en-tête personnalisé ni état global n'est nécessaire.
 
 Un `src/proxy.ts` redirige les chemins sans locale vers leur équivalent localisé. Il exclut les ressources internes Next.js, le manifeste, les icônes et les fichiers statiques. La racine `/` et les anciennes URL telles que `/plan` restent ainsi utilisables.
 
-La préférence est conservée dans un cookie non sensible. En l'absence de préférence, le français est utilisé. Aucune détection automatique via `Accept-Language` n'est nécessaire pour cette application personnelle.
+La préférence est conservée pendant un an dans le cookie non sensible `training-locale`, avec `Path=/`, `SameSite=Lax` et `Secure` sur HTTPS. En l'absence de préférence valide, le français est utilisé. L'URL localisée prévaut toujours sur ce cookie. Aucune détection automatique via `Accept-Language` n'est nécessaire pour cette application personnelle.
 
 Le sélecteur remplace uniquement le segment de locale et conserve la page, l'identifiant de séance et les paramètres de navigation courants. Le changement utilise un remplacement d'historique afin de ne pas ajouter une entrée artificielle à chaque bascule de langue.
 
@@ -228,7 +237,7 @@ Cette couche traduit :
 - les jours, dates, durées, distances et allures ;
 - les métadonnées et textes d'accessibilité.
 
-Les titres, notes et commentaires saisis librement à l'avenir restent dans leur langue d'origine. Les textes éditoriaux des fixtures de démonstration peuvent être localisés dans la couche de données de démonstration, sans transformer les types du domaine entraînement en objets multilingues.
+Les titres, notes et commentaires saisis librement à l'avenir restent dans leur langue d'origine. `localized-training-weeks.ts` fournit les textes anglais des seules séances de démonstration identifiées, sans modifier les fixtures françaises ni les types du domaine. Toute séance sans traduction de démonstration conserve son texte original.
 
 ### Composant de sélection
 
@@ -425,7 +434,7 @@ Le dashboard est rendu à chaque requête pour déterminer la date en Europe/Par
 
 La fixture est une semaine fixe du 28 septembre au 4 octobre 2026 : 92 km de course, 20 km de vélo et un vendredi de repos. Elle n'est pas déplacée automatiquement à chaque semaine ; une semaine absente est distinguée d'une semaine de repos. Les identifiants restent stables. Les récupérations des répétitions se placent uniquement entre les efforts.
 
-Le shell partagé, les pages et les détails utilisent des Server Components. Seule la navigation principale est un Client Component, pour lire le chemin avec `usePathname`. Les liens et leurs chemins secondaires proviennent de `navigation-items.ts` ; la correspondance respecte les frontières de segments pour ne pas activer Plan sur `/planning`.
+Le shell partagé, les pages et les détails utilisent des Server Components. La navigation principale utilise `usePathname` après retrait du préfixe de locale ; le sélecteur utilise `router.replace` pour préserver chemin, paramètres et ancre. Les liens et leurs chemins secondaires proviennent de `navigation-items.ts` ; la correspondance respecte les frontières de segments pour ne pas activer Plan sur `/planning`.
 
 Un seul menu change de disposition via CSS : barre fixe en bas sous 1000 px, barre latérale sticky à partir de 1000 px. Le contenu réserve 104 px plus la safe area basse sur mobile. Les styles du shell et des placeholders sont des CSS Modules ; les styles du dashboard et les variables du thème restent communs. Les icônes sont des SVG locaux décoratifs, accompagnés de libellés visibles. Aucun téléchargement de police, bibliothèque UI ou état global n'est nécessaire.
 
@@ -448,6 +457,7 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-01 | Conserver des routes explicites et des placeholders sans créer prématurément les modules métier correspondants | Validée |
 | 2026-10-02 | Utiliser `main` comme production Vercel stable et réserver les déploiements Preview aux branches et pull requests | Validée |
 | 2026-10-02 | Laisser la production V0 publique tant qu'elle ne contient que des fixtures non sensibles en lecture seule | Validée, à réévaluer avant les données réelles |
-| 2026-10-02 | Localiser les routes avec les préfixes `/fr` et `/en`, mémoriser le choix par cookie et conserver le français par défaut | Validée, à implémenter |
-| 2026-10-02 | Utiliser des dictionnaires TypeScript côté serveur sans dépendance d'internationalisation en V0 | Validée, à implémenter |
+| 2026-10-02 | Localiser les routes avec les préfixes `/fr` et `/en`, mémoriser le choix par cookie et conserver le français par défaut | Implémentée localement |
+| 2026-10-02 | Utiliser des dictionnaires TypeScript côté serveur sans dépendance d'internationalisation en V0 | Implémentée localement |
+| 2026-10-02 | Lire la locale avec `next/root-params` et traduire uniquement les textes éditoriaux des fixtures connues | Implémentée localement |
 

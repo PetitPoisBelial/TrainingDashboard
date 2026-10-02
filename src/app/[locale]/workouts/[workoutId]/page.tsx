@@ -1,58 +1,68 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { trainingWeeks } from "@/features/training/data/training-weeks";
+import { getLocaleContext } from "@/i18n/request-locale";
+import { localePath } from "@/i18n/locales";
+import { getTrainingWeeks } from "@/features/training/data/localized-training-weeks";
 import { findWorkout } from "@/features/training/model/selectors";
 import {
-  categories,
   dateLabel,
   pace,
-  roles,
-  sports,
   target,
   volume,
 } from "@/features/training/formatting";
 
-type Props = { params: Promise<{ workoutId: string }> };
+type Props = { params: Promise<{ locale: string; workoutId: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const workout = findWorkout(trainingWeeks, (await params).workoutId);
-  return { title: workout?.title ?? "Séance introuvable" };
+  const { locale, dictionary } = await getLocaleContext();
+  const workout = findWorkout(
+    getTrainingWeeks(locale),
+    (await params).workoutId,
+  );
+  return { title: workout?.title ?? dictionary.metadata.missing };
 }
 export default async function WorkoutPage({ params }: Props) {
-  const workout = findWorkout(trainingWeeks, (await params).workoutId);
+  const { locale, dictionary } = await getLocaleContext();
+  const workout = findWorkout(
+    getTrainingWeeks(locale),
+    (await params).workoutId,
+  );
   if (!workout) notFound();
+  const t = dictionary.workout;
   return (
     <article className="detail">
-      <Link className="back-link" href="/">
-        ← Retour à la semaine actuelle
+      <Link className="back-link" href={localePath(locale)}>
+        ← {t.back}
       </Link>
       <header className="page-heading">
-        <p className="eyebrow">{dateLabel(workout.scheduledOn)}</p>
+        <p className="eyebrow">
+          {dateLabel(workout.scheduledOn, undefined, locale)}
+        </p>
         <h1>
           {workout.title}
           <span className="accent">.</span>
         </h1>
         <div className="detail-meta">
           <span className={`tag tag-${workout.category}`}>
-            {categories[workout.category]}
+            {dictionary.categories[workout.category]}
           </span>
-          <span>{sports[workout.sport]}</span>
-          {workout.isKeyWorkout && <span>Séance clé</span>}
+          <span>{dictionary.sports[workout.sport]}</span>
+          {workout.isKeyWorkout && <span>{t.key}</span>}
         </div>
       </header>
       <section className="detail-volume">
-        <p className="eyebrow">VOLUME GLOBAL PRÉVU</p>
-        <p>{volume(workout)}</p>
+        <p className="eyebrow">{t.volume}</p>
+        <p>{volume(workout, locale, t.unknownVolume)}</p>
       </section>
       {workout.notes && (
         <aside className="coach-note">
-          <h2>Le fil conducteur</h2>
+          <h2>{t.guidance}</h2>
           <p>{workout.notes}</p>
         </aside>
       )}
       <section className="blocks-section">
-        <p className="eyebrow">PAS À PAS</p>
-        <h2>Le déroulé</h2>
+        <p className="eyebrow">{t.step}</p>
+        <h2>{t.structure}</h2>
         <ol className="blocks">
           {workout.blocks.map((block, index) => (
             <li key={index}>
@@ -61,22 +71,25 @@ export default async function WorkoutPage({ params }: Props) {
               </span>
               <div>
                 <p className="eyebrow">
-                  {block.kind === "segment" ? roles[block.role] : "Répétitions"}
+                  {block.kind === "segment"
+                    ? dictionary.roles[block.role]
+                    : t.repeats}
                 </p>
                 <h3>
                   {block.kind === "segment"
                     ? block.target
-                      ? target(block.target)
-                      : "À votre rythme"
-                    : `${block.count} × ${target(block.effort)}`}
+                      ? target(block.target, locale)
+                      : t.free
+                    : `${block.count} × ${target(block.effort, locale)}`}
                 </h3>
                 {block.pace && (
-                  <p className="block-pace">À {pace(block.pace)}</p>
+                  <p className="block-pace">
+                    {t.at} {pace(block.pace)}
+                  </p>
                 )}
                 {block.kind === "repeats" && block.recovery && (
                   <p className="recovery">
-                    Récupération : {target(block.recovery)} entre les
-                    répétitions
+                    {t.recovery} {target(block.recovery, locale)} {t.between}
                   </p>
                 )}
                 {block.notes && <p className="block-note">{block.notes}</p>}
@@ -85,8 +98,8 @@ export default async function WorkoutPage({ params }: Props) {
           ))}
         </ol>
       </section>
-      <Link className="back-link" href="/">
-        ← Retour à la semaine actuelle
+      <Link className="back-link" href={localePath(locale)}>
+        ← {t.back}
       </Link>
     </article>
   );

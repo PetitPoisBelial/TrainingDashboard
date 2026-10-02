@@ -49,12 +49,13 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 ### Internationalisation français / anglais
 
 - [x] Concevoir le routage localisé, les dictionnaires typés et la persistance du choix.
-- [ ] Déplacer les routes applicatives sous `app/[locale]/`.
-- [ ] Ajouter les dictionnaires français et anglais sans dépendance externe.
-- [ ] Ajouter le sélecteur `FR | EN` et mémoriser la préférence dans un cookie.
-- [ ] Traduire l'interface, les métadonnées et les contenus de démonstration.
-- [ ] Vérifier les redirections des anciennes URL et le lancement PWA.
-- [ ] Tester les deux langues, le formatage régional et la parité des dictionnaires.
+- [x] Déplacer les routes applicatives sous `app/[locale]/`.
+- [x] Ajouter les dictionnaires français et anglais sans dépendance externe.
+- [x] Ajouter le sélecteur `FR | EN` et mémoriser la préférence dans un cookie.
+- [x] Traduire l'interface, les métadonnées et les contenus de démonstration.
+- [x] Vérifier les redirections des anciennes URL, la préférence et les ressources PWA en local.
+- [ ] Vérifier le lancement PWA avec la langue mémorisée sur iPhone réel.
+- [x] Tester les deux langues, le formatage régional et la parité des dictionnaires.
 
 ### Validation
 
@@ -117,7 +118,9 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-Implémenter l'internationalisation français / anglais conformément à l'architecture validée, puis redéployer la production. Installer ensuite la production Vercel sur l'écran d'accueil d'un iPhone et valider sur Safari iOS le changement de langue, la navigation multi-page, les safe areas et le comportement standalone. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
+Redéployer la production avec l'internationalisation français / anglais implémentée localement. Installer ensuite la production Vercel sur l'écran d'accueil d'un iPhone et valider sur Safari iOS le changement de langue, la navigation multi-page, les safe areas et le comportement standalone. Les pages Plan, Activités et Analyses restent des placeholders pendant la V0.
+
+Validation locale de l'internationalisation du 2 octobre 2026 : lint, TypeScript, 16 tests et build réussis. Les 22 contrôles HTTP sur le build de production local couvrent les dix pages FR/EN, les anciennes URL avec préférence et paramètres, les erreurs 404, le manifeste et les icônes. Dans Chromium, la bascule conserve la séance, les paramètres et l'ancre ; le choix est réutilisé à l'ouverture de `/`, et précédent/suivant conservent un historique cohérent. Les textes et l'attribut `lang` des erreurs sont corrects dans le navigateur. Les boutons de langue mesurent 44 × 44 px ; dashboard et détail contrôlés à 320, 390 et 1280 px sans débordement horizontal. Le sélecteur latéral fonctionne au clavier. Cette version n'a pas encore été redéployée et ces contrôles ne remplacent pas une recette Safari iOS ou une installation PWA réelle.
 
 Validation de production du 2 octobre 2026 : <https://training-dashboard-snowy.vercel.app/> répond correctement en HTTPS. Accueil, Plan, Activités, Analyses et le détail d'une séance ont été parcourus sur le déploiement ; les titres, les états actifs du menu et le rattachement du détail à Plan sont corrects. Le manifeste, la couleur de thème et les liens vers les icônes PWA sont présents dans les métadonnées. La validation finale de l'ajout à l'écran d'accueil reste à effectuer sur l'iPhone réel.
 

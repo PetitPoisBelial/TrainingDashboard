@@ -1,25 +1,71 @@
 import Link from "next/link";
+import type { Dictionary } from "@/i18n/dictionaries/fr";
+import { localePath, type Locale } from "@/i18n/locales";
 import { PrimaryNavigation } from "./primary-navigation";
+import { LanguageSwitcher } from "./language-switcher";
 import styles from "./app-shell.module.css";
 
-export function AppShell({ children }: Readonly<{ children: React.ReactNode }>) {
+export function AppShell({
+  children,
+  locale,
+  dictionary,
+}: Readonly<{
+  children: React.ReactNode;
+  locale: Locale;
+  dictionary: Dictionary;
+}>) {
   return (
     <>
-      <a className="skip-link" href="#content">Aller au contenu</a>
+      <a className="skip-link" href="#content">
+        {dictionary.shell.skip}
+      </a>
       <div className={styles.frame}>
-        <PrimaryNavigation />
+        <div className={styles.sidebar}>
+          <PrimaryNavigation
+            locale={locale}
+            labels={dictionary.navigation}
+            heading={dictionary.shell.heading}
+            label={dictionary.shell.navigation}
+          />
+          <div className={styles.desktopLanguage}>
+            <LanguageSwitcher
+              locale={locale}
+              label={dictionary.shell.language}
+            />
+          </div>
+        </div>
         <div className={`shell ${styles.content}`}>
           <header className="site-header">
-            <Link className="brand" href="/" aria-label="Training Dashboard — accueil">
-              <span className="brand-mark" aria-hidden="true">↗</span>
-              <span>training<span className="brand-light"> / dashboard</span></span>
+            <Link
+              className="brand"
+              href={localePath(locale)}
+              aria-label={dictionary.shell.homeLabel}
+            >
+              <span className="brand-mark" aria-hidden="true">
+                ↗
+              </span>
+              <span>
+                training<span className="brand-light"> / dashboard</span>
+              </span>
             </Link>
-            <span className="demo-badge">Plan de démonstration</span>
+            <div className={styles.utilities}>
+              <span className={`demo-badge ${styles.demoBadge}`}>
+                {dictionary.shell.demo}
+              </span>
+              <div className={styles.mobileLanguage}>
+                <LanguageSwitcher
+                  locale={locale}
+                  label={dictionary.shell.language}
+                />
+              </div>
+            </div>
           </header>
-          <main id="content" tabIndex={-1}>{children}</main>
+          <main id="content" tabIndex={-1}>
+            {children}
+          </main>
           <footer className="site-footer">
-            <span>Un jour après l’autre.</span>
-            <span>Données locales · V0</span>
+            <span>{dictionary.shell.motto}</span>
+            <span>{dictionary.shell.local}</span>
           </footer>
         </div>
       </div>
