@@ -2,9 +2,13 @@
 
 ## État
 
-**En attente de l'utilisateur.** Aucun réglage Vercel, déploiement Preview ou test
-iPhone n'a été réalisé par le chat. Vercel Authentication reste le choix retenu
-sous réserve de cette recette. Aucun repli Supabase Auth n'est implémenté.
+**Recette partiellement validée le 3 octobre 2026.** L'utilisateur confirme
+l'activation de la protection, la connexion dans Safari et la PWA sur iPhone,
+la persistance après fermeture complète/réouverture et le blocage en navigation
+privée sur la Preview. Le chat a vérifié une redirection HTTP anonyme 302 vers
+vercel.com. Vercel Authentication reste retenue ; aucun besoin de repli n'est
+observé à ce stade. Les autres points de recette restent en attente.
+Preview testée : https://training-dashboard-qdkwymvmd-petitpoisbelial.vercel.app/fr.
 Les pages affichent toujours les fixtures V0 ; cette branche n'ajoute aucune
 lecture de données privées ni mutation accessible depuis le navigateur.
 
@@ -90,16 +94,16 @@ cookie, jeton ou identifiant sensible dans le compte rendu.
 
 | Point | Résultat |
 | --- | --- |
-| Offre et protection All Deployments | En attente |
-| Preview protégée ; URL/date | En attente |
+| Offre et protection All Deployments | Activation confirmée par l'utilisateur ; offre non relevée |
+| Preview protégée ; URL/date | URL ci-dessus, 3 octobre 2026 ; accès anonyme redirigé HTTP 302 vers vercel.com |
 | Domaine production protégé | En attente |
-| Safari connexion et retour | En attente |
-| PWA connexion et retour | En attente |
-| Persistance après fermeture et lendemain | En attente |
+| Safari connexion et retour | Réussite confirmée par l'utilisateur sur iPhone |
+| PWA connexion et retour | Réussite confirmée par l'utilisateur sur iPhone |
+| Persistance après fermeture et lendemain | Fermeture complète/réouverture validée ; lendemain en attente |
 | Expiration naturelle / perte de session / reconnexion | En attente, distinguer les trois |
 | Déconnexion et comportement des cookies existants | En attente |
-| Compte non autorisé et session anonyme bloqués | En attente |
-| Décision Vercel Authentication / repli | En attente |
+| Compte non autorisé et session anonyme bloqués | Navigation privée bloquée confirmée ; compte distinct sans accès en attente |
+| Décision Vercel Authentication / repli | Vercel Authentication conservée à ce stade ; fin de recette en attente |
 
 Rapporter ici uniquement les observations. Si la PWA boucle, perd la session
 de façon inacceptable ou ne revient pas après connexion, le jalon est bloqué :

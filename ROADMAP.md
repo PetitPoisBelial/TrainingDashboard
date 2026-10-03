@@ -135,9 +135,14 @@ Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 1
   nul et zéro plan, vérifiés en lecture seule. Aucun secret affiché ou versionné.
 - Configuration des variables Vercel déclarée par l'utilisateur ; séparation effective
   et portées à confirmer. Restent en attente : migrations Preview/production si
-  nécessaires (autorisation distincte), activation Vercel, Preview, recette iPhone,
-  vérification de la rétention Neon et décision finale d'accès privé.
-- Aucun dump ou exercice de restauration réalisé ; outils PostgreSQL absents.
+  nécessaires (autorisation distincte), fin de recette iPhone, vérification du
+  domaine de production, de la rétention Neon et décision finale d'accès privé.
+- Protection Vercel activée selon l'utilisateur. Preview déployée : accès anonyme
+  HTTP 302 vers Vercel vérifié. Connexion Safari/PWA iPhone, persistance après
+  fermeture complète/réouverture et blocage en navigation privée confirmés par
+  l'utilisateur. Persistance le lendemain, expiration et reconnexion restent
+  en attente ; aucun besoin de repli observé à ce stade.
+- Aucun dump ou exercice de restauration réalisé.
   Aucun push, PR ou fusion par ce chat. Le lot 3 reste décoché.
 
 ### Création dans l'application
