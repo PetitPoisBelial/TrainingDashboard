@@ -87,10 +87,10 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 - [x] Retenir un fichier `.xlsx` comme format d'import et d'export de la V1.
 - [x] Décider qu'un import crée toujours un nouveau plan et ne met jamais à jour un plan existant.
 - [x] Exiger une persistance serveur privée et synchronisée entre ordinateur et iPhone, sans objectif multi-utilisateur.
-- [ ] Définir les feuilles, les champs obligatoires et les règles de validation du modèle `.xlsx`.
+- [x] Définir les trois feuilles, les champs obligatoires et les règles métier principales du modèle `.xlsx`.
 - [ ] Choisir la solution technique de persistance, le contrôle d'accès et la stratégie de sauvegarde.
-- [ ] Définir le modèle métier minimal d'un plan, de ses semaines et de ses séances.
-- [ ] Séparer le statut temporel calculé (`planned`, `in-progress`, `finished`) de l'état d'activation choisi par l'utilisateur.
+- [x] Définir le modèle métier minimal d'un plan, de ses séances et de ses blocs, avec des semaines dérivées.
+- [x] Séparer le statut temporel calculé (`planned`, `in-progress`, `finished`) de l'état d'activation choisi par l'utilisateur.
 - [ ] Définir les critères d'acceptation de la V1.
 
 ### Liste et consultation
@@ -196,7 +196,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-La V0 est clôturée. Le prochain jalon est le cadrage de la V1 : définir précisément le modèle `.xlsx`, puis choisir la persistance serveur privée et le contrôle d'accès nécessaires à la synchronisation ordinateur/iPhone. Les pages Plan, Activités et Analyses restent des placeholders jusqu'à leur implémentation dans une phase ultérieure.
+La V0 est clôturée. Le modèle métier cible et la structure fonctionnelle du fichier `.xlsx` de la V1 sont validés. Le prochain jalon est de choisir la persistance serveur privée, le contrôle d'accès et la stratégie de sauvegarde nécessaires à la synchronisation ordinateur/iPhone, puis de fixer les critères d'acceptation de la V1. Les pages Plan, Activités et Analyses restent des placeholders jusqu'à leur implémentation dans une phase ultérieure.
 
 Recette finale confirmée par l'utilisateur : liens, navigation clavier et safe areas vérifiés. Cette validation complète les contrôles techniques, de production et sur iPhone ci-dessous et clôture la V0.
 

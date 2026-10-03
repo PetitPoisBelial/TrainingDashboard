@@ -371,6 +371,163 @@ La couche métier fournit uniquement les fonctions pures nécessaires pour :
 - modèle de persistance ;
 - versionnement des séances.
 
+## Modèle métier cible de la V1
+
+La V1 introduit un plan d'entraînement complet au-dessus des séances existantes. Le modèle reste composé d'objets TypeScript immuables et de fonctions pures. Les identifiants internes, les détails de persistance et les métadonnées techniques ne doivent pas contaminer les règles sportives.
+
+### `TrainingPlan`
+
+Un plan contient :
+
+- `id` : identifiant interne stable ;
+- `name` : nom court du plan ;
+- `startsOn` et `endsOn` : dates locales ISO inclusives ;
+- `description` : objectif, contexte ou consignes générales facultatives ;
+- `workouts` : liste ordonnée de toutes les séances du plan.
+
+La forme TypeScript cible est :
+
+```ts
+type TrainingPlan = Readonly<{
+  id: string;
+  name: string;
+  startsOn: LocalDate;
+  endsOn: LocalDate;
+  description?: string;
+  workouts: readonly Workout[];
+}>;
+```
+
+Les semaines ne sont pas la source de vérité du plan. Elles sont des vues calculées en regroupant les séances du lundi au dimanche, y compris lorsque la première ou la dernière semaine n'est couverte que partiellement par les dates du plan. Cette règle évite de dupliquer les dates, facilite l'import `.xlsx` et permet de recalculer immédiatement les semaines après le déplacement d'une séance.
+
+Le kilométrage hebdomadaire de course est la somme des distances globales prévues des séances de course. Le vélo possède son propre total et n'est jamais additionné au kilométrage de course. Aucun total hebdomadaire n'est stocké.
+
+Invariants :
+
+- `startsOn` est antérieur ou égal à `endsOn` ;
+- chaque séance est comprise dans les dates inclusives du plan ;
+- les identifiants de séance sont uniques dans le plan ;
+- plusieurs séances peuvent partager une date et conservent l'ordre défini dans le plan.
+
+### Activation et statut temporel
+
+L'activation n'est pas un statut métier du plan : l'application conserve séparément la référence du plan actif et garantit qu'il n'en existe au plus qu'un. Un nouveau plan importé est inactif jusqu'à une action explicite de l'utilisateur.
+
+Le statut temporel est calculé à partir de la date courante dans le fuseau `Europe/Paris` :
+
+- `planned` avant `startsOn` ;
+- `in-progress` entre `startsOn` et `endsOn`, bornes incluses ;
+- `finished` après `endsOn`.
+
+Un plan terminé reste consultable. Aucun état `archived` ni brouillon persistant n'est nécessaire dans le premier périmètre : l'aperçu d'import existe avant la création atomique du plan.
+
+### `Workout`
+
+Une séance conserve les champs de la V0 : date, sport, catégorie, titre, importance, volume global, blocs ordonnés et notes facultatives. La V1 ajoute la catégorie `race` et précise les volumes obligatoires selon le sport.
+
+Pour une séance de course :
+
+- la distance globale prévue est obligatoire et strictement positive ;
+- la durée globale reste facultative ;
+- la distance est une estimation assumée, utilisée pour les totaux quotidiens et hebdomadaires.
+
+Pour une séance de vélo, au moins une distance ou une durée globale est requise. Cette souplesse correspond aux sorties prescrites principalement en durée.
+
+La forme cible peut être exprimée par une union discriminée `RunningWorkout | CyclingWorkout`, partageant les champs suivants :
+
+```ts
+type WorkoutCommon = Readonly<{
+  id: string;
+  scheduledOn: LocalDate;
+  category:
+    | "easy"
+    | "recovery"
+    | "long-run"
+    | "tempo"
+    | "intervals"
+    | "race"
+    | "other";
+  title: string;
+  isKeyWorkout: boolean;
+  notes?: string;
+  blocks: readonly WorkoutBlock[];
+}>;
+```
+
+Une course est une séance de catégorie `race`, généralement importante, et non une entité séparée. Un jour sans séance dans un plan actif représente un jour de repos. Un footing simple possède un unique bloc `segment`, généré automatiquement par l'éditeur ou l'import afin de ne pas imposer une saisie redondante à l'utilisateur.
+
+Le volume global d'une séance ne doit pas être recalculé depuis ses blocs. Par exemple, une séance de 16 km peut contenir des récupérations prescrites en durée et des éducatifs sans distance connue. Les blocs décrivent le déroulé ; le volume global fournit l'estimation utilisée par le calendrier.
+
+### `WorkoutBlock`
+
+L'union `segment | repeats` est conservée. Les deux variantes reçoivent un `label` facultatif pour nommer simplement un bloc tel que « Allure semi » ou « Bloc principal ».
+
+Une récupération attachée à un bloc de répétitions devient un objet structuré :
+
+```ts
+type Recovery = Readonly<{
+  target: Target;
+  pace?: Pace;
+  notes?: string;
+}>;
+```
+
+Le bloc `repeats` conserve un nombre de répétitions, une cible d'effort en distance ou en durée, une allure facultative et une récupération facultative. La récupération intégrée ne s'applique qu'entre les répétitions. Une récupération autonome entre deux grands blocs reste un bloc `segment` de rôle `recovery`.
+
+L'ordre des blocs dans le tableau constitue leur ordre d'exécution. Une position explicite sera utilisée dans la persistance et le fichier `.xlsx`, sans être dupliquée dans chaque objet métier imbriqué.
+
+Les objectifs restent exacts en V1 : une séance possède une distance estimée unique et un bloc une distance ou une durée unique. Une prescription souple telle que `18–22 km`, une alternative ou une condition est représentée par une valeur choisie accompagnée de `notes`. Les plages d'allure restent structurées par leurs bornes rapide et lente.
+
+### Format `.xlsx` de référence
+
+Le classeur comporte exactement trois feuilles canoniques, non localisées afin de garantir un format stable : `Plan`, `Sessions` et `Blocks`. Il transporte les données métier du plan, mais jamais son état actif, ses identifiants internes de base de données ou des données réalisées.
+
+#### Feuille `Plan`
+
+Une seule ligne de données avec les colonnes obligatoires `name`, `starts_on` et `ends_on`, plus la colonne facultative `description`.
+
+#### Feuille `Sessions`
+
+Une ligne par séance avec les colonnes :
+
+- `session_ref` : référence unique dans le classeur, utilisée par `Blocks` ;
+- `date`, `sport`, `category`, `title` ;
+- `distance_km`, `duration_min` ;
+- `is_key` ;
+- `notes`.
+
+`distance_km` est obligatoire pour la course. Pour le vélo, `distance_km` ou `duration_min` doit être renseigné. `session_ref` sert uniquement aux relations dans le fichier ; l'import génère de nouveaux identifiants internes.
+
+#### Feuille `Blocks`
+
+Une ligne par bloc avec les colonnes :
+
+- `session_ref` et `position` ;
+- `kind`, `role` et `label` ;
+- `repeat_count` ;
+- `distance_km` ou `duration_min` pour la cible du segment ou de l'effort ;
+- `pace_fast` et `pace_slow` ;
+- `recovery_distance_km` ou `recovery_duration_min` ;
+- `recovery_pace_fast`, `recovery_pace_slow` et `recovery_notes` ;
+- `notes`.
+
+Pour `kind = segment`, `repeat_count` et les champs de récupération restent vides. Pour `kind = repeats`, `repeat_count` est obligatoire et `role` reste vide. Une seule cible parmi distance et durée peut être renseignée pour un effort ou une récupération.
+
+Le classeur utilise des unités lisibles : kilomètres, minutes et allures au format `mm:ss/km`. La couche d'import convertit ces valeurs vers les unités canoniques du domaine : mètres, secondes et secondes par kilomètre. L'export effectue la conversion inverse.
+
+L'import valide entièrement le classeur et affiche un aperçu avant toute écriture. Sa confirmation crée le plan et toutes ses séances et blocs de manière atomique. Un export réimporté produit toujours un nouveau plan inactif avec de nouveaux identifiants internes.
+
+### Données différées après la V1
+
+Le modèle V1 ne contient pas encore :
+
+- activité réalisée ou statut de réalisation ;
+- identifiant Strava ou données cardiaques ;
+- RPE et sensations post-séance ;
+- association prévu/réalisé ;
+- moteur de phases ou de génération automatique de plans ;
+- historique complet des modifications.
+
 ## Frontend et serveur
 
 - Utiliser les Server Components par défaut lorsque cela simplifie le rendu.
@@ -465,4 +622,9 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-02 | Insérer une V1 dédiée à la gestion des plans avant l'intégration Strava, désormais prévue en V2 | Validée |
 | 2026-10-02 | Synchroniser les plans via une persistance serveur privée entre ordinateur et iPhone, sans objectif multi-utilisateur | Validée, solution technique à choisir |
 | 2026-10-02 | Utiliser `.xlsx` pour l'import et l'export ; chaque import crée un nouveau plan sans fusion ni mise à jour | Validée |
+| 2026-10-03 | Faire de `TrainingPlan` la source de vérité et dériver les semaines et leurs totaux depuis les séances datées | Validée |
+| 2026-10-03 | Exiger une distance globale estimée pour chaque séance de course et séparer les totaux course et vélo | Validée |
+| 2026-10-03 | Ajouter la catégorie `race`, conserver les blocs `segment` / `repeats` et structurer la récupération des répétitions | Validée |
+| 2026-10-03 | Séparer l'activation choisie du statut temporel calculé et ne stocker ni brouillon ni archive dans le premier périmètre | Validée |
+| 2026-10-03 | Structurer le modèle `.xlsx` en trois feuilles canoniques `Plan`, `Sessions` et `Blocks` | Validée |
 
