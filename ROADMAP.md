@@ -78,7 +78,7 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 ## V1 — Gestion des plans
 
-**Statut : architecture validée, lot 2 — Domaine et validation terminé localement.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
+**Statut : lot 2 fusionné dans main ; lot 3 en cours, fondation locale implémentée, validations PostgreSQL et externes en attente.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
 
 ### Objectif
 
@@ -116,6 +116,34 @@ Les lots sont ordonnés. Chaque PR dépend uniquement des lots précédents déj
 12. [ ] **Suppression et recette finale** — supprimer un plan actif ou inactif, renforcer les erreurs et conflits, tester une restauration, effectuer la recette bilingue sur iPhone et produire le build final.
 
 Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 12 vérifie que cette sauvegarde est réellement restaurable ; il ne crée pas la stratégie après coup.
+
+État du lot 3 au 3 octobre 2026 :
+
+- Implémenté : dépendances Drizzle/pg, client serveur paresseux, quatre tables,
+  première migration SQL, mappings validés, lectures cohérentes, écritures atomiques
+  et révisions conditionnelles ; aucune nouvelle interface et aucune page connectée.
+- Vérifié localement : 39 tests unitaires réussis, TypeScript, lint, build de
+  production et contrôle des métadonnées Drizzle réussis.
+- Préparé : tests PostgreSQL réels séparés, runbook des environnements et sauvegardes,
+  checklist Vercel Authentication / Safari / PWA.
+- Vérifié sur PostgreSQL local dédié : migration sur base vide et réapplication
+  idempotente, création et chargement d'agrégat, rollback, révisions concurrentes,
+  état actif, contraintes et cascades ; 10 tests réussis (9 sous-tests et leur
+  suite parente). Les objets créés ont été nettoyés après exécution.
+- Migration Neon development appliquée après autorisation explicite de l'utilisateur :
+  quatre tables, une migration enregistrée, état initial id 1/révision 1/plan actif
+  nul et zéro plan, vérifiés en lecture seule. Aucun secret affiché ou versionné.
+- Configuration des variables Vercel déclarée par l'utilisateur ; séparation effective
+  et portées à confirmer. Restent en attente : migrations Preview/production si
+  nécessaires (autorisation distincte), fin de recette iPhone, vérification du
+  domaine de production, de la rétention Neon et décision finale d'accès privé.
+- Protection Vercel activée selon l'utilisateur. Preview déployée : accès anonyme
+  HTTP 302 vers Vercel vérifié. Connexion Safari/PWA iPhone, persistance après
+  fermeture complète/réouverture et blocage en navigation privée confirmés par
+  l'utilisateur. Persistance le lendemain, expiration et reconnexion restent
+  en attente ; aucun besoin de repli observé à ce stade.
+- Aucun dump ou exercice de restauration réalisé.
+  Aucun push, PR ou fusion par ce chat. Le lot 3 reste décoché.
 
 ### Création dans l'application
 
@@ -239,7 +267,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-La V0 est clôturée et le lot 2 de la V1 est terminé localement. Le prochain jalon est le lot 3, accès privé et persistance, après revue et fusion du lot 2. Le premier déploiement connecté à PostgreSQL restera bloqué tant que Vercel Authentication n'aura pas été validée dans Safari iOS et dans la PWA installée. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
+La V0 est clôturée et le lot 2 est fusionné. Le jalon courant est la validation réelle du lot 3 : PostgreSQL dédié puis configuration Neon/Vercel et recette d'accès privé. Une Preview des fixtures peut servir au test d'authentification ; le premier déploiement connecté à PostgreSQL restera bloqué tant que Vercel Authentication n'aura pas été validée dans Safari iOS et dans la PWA installée. Le lot 4 ne commence pas avant cette clôture. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
 
 Validation du lot 2 le 3 octobre 2026 : 32 tests purs réussis (16 nouveaux et 16 existants), vérification TypeScript, lint et build de production réussis. Le domaine couvre les identifiants opaques, les dates ISO valides, les invariants du plan et des séances, les changements de période, les statuts explicites, les semaines complètes ou partielles, les semaines de repos et les totaux séparés. Les fixtures et la source du dashboard V0 sont préservées ; seule la lecture de la récupération est adaptée à son objet structuré. Aucune dépendance, persistance, interface de gestion ou fonctionnalité des lots suivants n'est ajoutée.
 
