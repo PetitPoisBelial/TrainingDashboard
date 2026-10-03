@@ -58,3 +58,29 @@ Le dépôt est lié à Vercel : [production](https://training-dashboard-snowy.ve
 Après redéploiement, vérifier `/fr` et `/en`, `/en/workouts/2026-09-29-intervalles`, une séance inconnue (404), `/manifest.webmanifest`, le changement de langue et l'installation iPhone.
 
 Voir `PROJECT.md`, `ARCHITECTURE.md` et `ROADMAP.md` pour le périmètre et les décisions.
+
+## Fondation PostgreSQL V1 — lot 3
+
+L'interface continue à utiliser les fixtures V0. Le schéma, les mappings et les
+transactions V1 sont préparés côté serveur sans connexion au dashboard.
+`pnpm dev` et `pnpm build` ne demandent aucune variable PostgreSQL.
+
+```sh
+pnpm db:generate
+pnpm db:check
+pnpm test:integration
+```
+
+Génération et contrôle Drizzle n'utilisent aucune connexion. Les tests d'intégration
+exigent un PostgreSQL local réel et une base vide jetable `training_dashboard_test` ;
+configurer `TRAINING_TEST_DATABASE_URL` dans `.env.database.test.local` ignoré.
+Ils refusent les URL distantes et la production, et suppriment les objets créés
+pendant la suite. `pnpm test` reste indépendant de toute base.
+
+Les migrations sont exclusivement explicites avec `pnpm db:migrate`, après
+configuration opérateur et autorisation pour toute cible distante. Voir le
+[runbook](docs/V1_DATABASE_RUNBOOK.md) pour les variables, le provisionnement Neon,
+la séparation développement/Preview/production et les sauvegardes.
+La [checklist d'accès privé](docs/V1_PRIVATE_ACCESS_CHECKLIST.md) décrit le jalon
+Vercel Authentication / Safari / PWA iOS encore en attente. Aucune donnée réelle
+avant validation ; le lot 3 n'est pas encore clôturé.
