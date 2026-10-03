@@ -4,8 +4,10 @@
 
 Fondation implémentée : schéma Drizzle, migration SQL versionnée, client Node.js serveur,
 mappings purs et primitives transactionnelles. Aucune page n'utilise PostgreSQL.
-Les tests PostgreSQL existent mais leur exécution et l'application sur une base vide
-restent en attente d'une instance locale dédiée. Aucun environnement Neon/Vercel
+Les tests PostgreSQL ont été exécutés sur une base locale dédiée vide : 10 tests
+réussis (9 sous-tests et leur suite parente), avec nettoyage des objets créés.
+Migration, rollback, concurrence, contraintes et cascades sont vérifiés localement.
+Aucun environnement Neon/Vercel
 n'a été créé ou configuré par ce chat. La recette d'accès iPhone est dans
 `V1_PRIVATE_ACCESS_CHECKLIST.md`. Aucun plan personnel ne doit être enregistré avant sa validation.
 

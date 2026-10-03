@@ -126,9 +126,10 @@ Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 1
   production et contrôle des métadonnées Drizzle réussis.
 - Préparé : tests PostgreSQL réels séparés, runbook des environnements et sauvegardes,
   checklist Vercel Authentication / Safari / PWA.
-- En attente : PostgreSQL local dédié, migration sur base vide, transactions et
-  concurrence exécutées réellement ; commande d'intégration refusée avant connexion
-  car la variable dédiée n'est pas configurée.
+- Vérifié sur PostgreSQL local dédié : migration sur base vide et réapplication
+  idempotente, création et chargement d'agrégat, rollback, révisions concurrentes,
+  état actif, contraintes et cascades ; 10 tests réussis (9 sous-tests et leur
+  suite parente). Les objets créés ont été nettoyés après exécution.
 - En attente utilisateur : création Neon, secrets limités par environnement,
   autorisation de migration distante, séparation effective des trois bases/branches,
   activation Vercel, Preview, recette iPhone et décision finale d'accès privé.
