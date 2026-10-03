@@ -78,6 +78,8 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 ## V1 — Gestion des plans
 
+**Statut : architecture validée, implémentation non commencée.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
+
 ### Objectif
 
 Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'entraînement. Un seul plan peut être actif à la fois et devient la source du dashboard et des autres pages concernées. Les données et modifications réalisées dans l'application sont synchronisées entre ordinateur et iPhone.
@@ -88,14 +90,44 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 - [x] Décider qu'un import crée toujours un nouveau plan et ne met jamais à jour un plan existant.
 - [x] Exiger une persistance serveur privée et synchronisée entre ordinateur et iPhone, sans objectif multi-utilisateur.
 - [x] Définir les trois feuilles, les champs obligatoires et les règles métier principales du modèle `.xlsx`.
-- [ ] Choisir la solution technique de persistance, le contrôle d'accès et la stratégie de sauvegarde.
+- [x] Choisir Neon PostgreSQL via Vercel, Drizzle et des migrations SQL versionnées.
+- [x] Choisir Vercel Authentication pour tous les déploiements contenant des données réelles, avec Supabase Auth comme repli si la PWA iOS ne fournit pas une expérience acceptable.
+- [x] Définir une stratégie de sauvegarde combinant restauration native, dumps hors fournisseur et exercice de restauration.
 - [x] Définir le modèle métier minimal d'un plan, de ses séances et de ses blocs, avec des semaines dérivées.
 - [x] Séparer le statut temporel calculé (`planned`, `in-progress`, `finished`) de l'état d'activation choisi par l'utilisateur.
-- [ ] Définir les critères d'acceptation de la V1.
+- [x] Retenir des formulaires par entité avec enregistrement explicite et une révision optimiste contre les écrasements entre appareils.
+- [x] Définir les critères d'acceptation de la V1.
+
+### Découpage en lots et pull requests
+
+Les lots sont ordonnés. Chaque PR dépend uniquement des lots précédents déjà fusionnés et ne doit pas exiger plusieurs fonctionnalités inachevées en parallèle.
+
+1. [x] **Architecture documentaire** — enregistrer les décisions, critères d'acceptation, flux, routes, schéma logique, risques et ordre des lots.
+2. [ ] **Domaine et validation** — finaliser `TrainingPlan`, étendre les types Training, ajouter les invariants, projections, erreurs typées et tests purs, sans interface ni persistance.
+3. [ ] **Accès privé et persistance** — valider Vercel Authentication dans Safari et la PWA iOS, créer la base de développement, le schéma, les migrations, les transactions, les révisions, la séparation Preview/production et le premier runbook de sauvegarde.
+4. [ ] **Lecture verticale des plans** — persister des données de développement puis livrer la liste, l'état vide, le détail, les semaines, les chargements, les erreurs et les 404.
+5. [ ] **Création minimale** — créer un plan inactif à partir d'un nom, d'une période et d'une description facultative.
+6. [ ] **Activation et dashboard** — gérer l'unique plan actif, confirmer son remplacement et alimenter le dashboard avec une projection `TrainingWeek`.
+7. [ ] **Import `.xlsx`** — fournir un modèle, analyser côté serveur, afficher erreurs et aperçu, détecter les ressemblances puis créer atomiquement un plan inactif.
+8. [ ] **Export et réimportation** — exporter le format versionné, vérifier sa lisibilité et couvrir le round-trip vers une copie indépendante.
+9. [ ] **Édition des informations générales** — modifier nom, période et description avec validation des séances existantes et détection de conflit.
+10. [ ] **Gestion des séances** — ajouter, modifier, déplacer et supprimer une séance, puis recalculer les projections.
+11. [ ] **Édition des blocs** — modifier les blocs `segment` et `repeats`, leur ordre et leur récupération structurée dans la transaction de la séance.
+12. [ ] **Suppression et recette finale** — supprimer un plan actif ou inactif, renforcer les erreurs et conflits, tester une restauration, effectuer la recette bilingue sur iPhone et produire le build final.
+
+Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 12 vérifie que cette sauvegarde est réellement restaurable ; il ne crée pas la stratégie après coup.
+
+### Création dans l'application
+
+- [ ] Afficher un formulaire mobile-first demandant un nom, une date de début, une date de fin et une description facultative.
+- [ ] Créer le plan vide et inactif dans une transaction.
+- [ ] Afficher les erreurs de forme et les erreurs métier en français et en anglais.
+- [ ] Rediriger vers le détail du plan créé sans activer automatiquement celui-ci.
+- [ ] Différer la duplication d'un plan tant qu'un besoin concret ne la justifie pas.
 
 ### Liste et consultation
 
-- [ ] Remplacer le placeholder Plan par une liste des plans importés.
+- [ ] Remplacer le placeholder Plan par une liste des plans enregistrés, qu'ils aient été créés ou importés.
 - [ ] Afficher pour chaque plan son nom, ses dates, son statut temporel et son état actif ou inactif.
 - [ ] Conserver les plans terminés dans la liste et permettre de les consulter.
 - [ ] Ajouter une page de détail donnant accès aux semaines et aux séances d'un plan.
@@ -104,6 +136,7 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 ### Import
 
 - [ ] Fournir un fichier modèle `.xlsx` accompagné d'un exemple réaliste.
+- [ ] Ajouter `format_version = 1` dans la feuille `Plan` sans exposer d'identifiant interne ni l'état actif.
 - [ ] Permettre d'importer un plan depuis le fichier modèle `.xlsx`.
 - [ ] Valider le fichier et présenter les erreurs de manière exploitable.
 - [ ] Afficher un aperçu avant de confirmer la création du plan.
@@ -135,12 +168,22 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 
 ### Validation
 
+- [ ] Vérifier qu'un utilisateur non autorisé ne peut ni consulter, ni modifier, ni importer, ni exporter les plans.
+- [ ] Vérifier l'authentification, l'expiration de session et la reconnexion dans Safari iOS et dans la PWA installée avant toute donnée réelle.
 - [ ] Vérifier les transitions de statut aux dates de début et de fin.
 - [ ] Vérifier que plusieurs plans peuvent coexister mais qu'un seul est actif.
+- [ ] Distinguer aucun plan actif, date hors période, semaine de repos et semaine contenant des séances.
 - [ ] Vérifier la persistance après fermeture et réouverture de la PWA.
 - [ ] Vérifier que les modifications réalisées sur ordinateur sont retrouvées sur iPhone, et inversement.
+- [ ] Vérifier qu'une modification fondée sur une ancienne révision est refusée sans écraser la version plus récente.
+- [ ] Vérifier qu'un plan peut être créé depuis l'application puis enrichi avec des séances et des blocs.
+- [ ] Vérifier qu'un import invalide, interrompu ou non confirmé ne crée aucune donnée.
 - [ ] Vérifier qu'un export réimporté crée une copie complète sans modifier le plan source.
+- [ ] Vérifier que les semaines, statuts et totaux sont dérivés et immédiatement recalculés après une modification.
+- [ ] Vérifier la parité des messages français et anglais, la navigation clavier, les retours d'erreur et les zones tactiles de 44 px.
 - [ ] Tester l'import, l'édition, l'activation et la suppression sur iPhone.
+- [ ] Vérifier que les Preview ne possèdent pas de secret d'écriture vers la base de production.
+- [ ] Produire un dump hors fournisseur et réussir un exercice documenté de restauration.
 - [ ] Vérifier le typage, le lint, les tests et le build de production.
 
 ### Hors périmètre initial
@@ -196,7 +239,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-La V0 est clôturée. Le modèle métier cible et la structure fonctionnelle du fichier `.xlsx` de la V1 sont validés. Le prochain jalon est de choisir la persistance serveur privée, le contrôle d'accès et la stratégie de sauvegarde nécessaires à la synchronisation ordinateur/iPhone, puis de fixer les critères d'acceptation de la V1. Les pages Plan, Activités et Analyses restent des placeholders jusqu'à leur implémentation dans une phase ultérieure.
+La V0 est clôturée et l'architecture V1 est validée. Le prochain jalon est le lot 2, domaine et validation, après fusion de la PR documentaire. Le premier déploiement connecté à PostgreSQL restera bloqué tant que Vercel Authentication n'aura pas été validée dans Safari iOS et dans la PWA installée. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
 
 Recette finale confirmée par l'utilisateur : liens, navigation clavier et safe areas vérifiés. Cette validation complète les contrôles techniques, de production et sur iPhone ci-dessous et clôture la V0.
 

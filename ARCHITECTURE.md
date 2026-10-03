@@ -2,7 +2,7 @@
 
 ## Statut
 
-La V0 est clôturée. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. L'utilisateur a confirmé la recette finale des liens, de la navigation clavier et des safe areas. Le prochain jalon est le cadrage de la V1 — Gestion des plans ; les choix de persistance et de contrôle d'accès restent à définir.
+La V0 est clôturée. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. L'utilisateur a confirmé la recette finale des liens, de la navigation clavier et des safe areas. L'architecture de la V1 — Gestion des plans est validée ; le prochain jalon est l'implémentation progressive du domaine, de l'accès privé et de la persistance décrite dans `docs/V1_PLANS_DESIGN.md`.
 
 ## Principes
 
@@ -532,16 +532,27 @@ Le modèle V1 ne contient pas encore :
 
 - Utiliser les Server Components par défaut lorsque cela simplifie le rendu.
 - Ajouter un Client Component uniquement lorsqu'une interaction ou une API navigateur l'exige.
-- Ne pas créer d'API interne en V0 sans besoin démontré.
+- Utiliser des Server Actions pour les formulaires et commandes applicatives ordinaires de la V1.
+- Réserver les Route Handlers aux échanges binaires d'import et d'export `.xlsx`.
+- Garder les brouillons de formulaire dans un état client local ; ne pas ajouter de store global.
+- Ne jamais importer le client PostgreSQL ou une dépendance XLSX dans un composant client.
 - Toute future opération Strava nécessitant un secret devra être exécutée côté serveur.
 
 ## Persistance
 
 La V0 utilise des données locales ou mockées versionnées dans le dépôt.
 
-La V1 devra synchroniser les plans et les modifications réalisées dans l'application entre ordinateur et iPhone. Ce besoin justifie une persistance serveur privée, tout en conservant un produit mono-utilisateur. La solution technique, le contrôle d'accès et la stratégie de sauvegarde restent à décider avant l'implémentation. Supabase/PostgreSQL demeure une option privilégiée, mais n'est pas encore validée.
+La V1 utilise Neon PostgreSQL via Vercel comme source de vérité synchronisée. Drizzle fournit le schéma TypeScript, les requêtes et les migrations SQL versionnées. Le modèle métier reste indépendant des tables et aucune abstraction générique de repository n'est introduite sans seconde implémentation réelle.
+
+L'application demeure mono-utilisateur : Vercel Authentication protège tous les déploiements contenant des données réelles, sans table `users` ni colonne `owner_id`. Cette approche doit être validée dans Safari iOS et dans la PWA installée avant l'enregistrement de données de production. Si l'expérience est insuffisante, le repli prévu est Supabase Auth avec un compte précréé et les inscriptions désactivées ; ce changement devra intervenir avant les premières données réelles.
+
+La sélection du plan actif est stockée dans une ligne applicative unique contenant une référence nullable, plutôt que dans un booléen dupliqué sur chaque plan. Chaque plan et cet état applicatif possèdent une révision entière. Une mutation ne réussit que si la révision lue par le formulaire est encore courante, ce qui empêche un appareil d'écraser silencieusement une modification plus récente réalisée sur l'autre.
+
+La production et les Preview utilisent des bases ou branches PostgreSQL séparées. Les migrations sont exécutées explicitement et ne sont jamais lancées au démarrage des fonctions Vercel. Les sauvegardes combinent la restauration native du fournisseur, un `pg_dump` avant toute migration destructive, des dumps périodiques conservés hors fournisseur et un exercice documenté de restauration.
 
 L'import et l'export utilisent un modèle `.xlsx`. Un import crée toujours un nouveau plan avec de nouveaux identifiants internes ; il ne fusionne pas les données et ne met pas à jour un plan existant. Après l'import, les données enregistrées dans l'application constituent la source de vérité. Un plan modifié peut être exporté, édité dans un tableur puis réimporté comme un nouveau plan indépendant.
+
+Le format ajoute une colonne obligatoire `format_version`, initialement égale à `1`, dans la feuille `Plan`. Il n'expose ni identifiant interne, ni état actif, ni métadonnée sensible. Les détails des tables, transactions, flux d'import/export, routes et erreurs sont définis dans `docs/V1_PLANS_DESIGN.md`.
 
 ## Déploiement Vercel
 
@@ -552,9 +563,9 @@ Le dépôt GitHub est connecté à Vercel avec `main` comme branche de productio
 - Aucun workflow GitHub Actions, fichier `vercel.json`, secret ou variable d'environnement n'est nécessaire pour la V0.
 - Les mises à jour de `main` déclenchent un nouveau déploiement de production.
 
-La production V0 est publique et ne comporte pas d'authentification applicative. Ce choix est acceptable tant que l'application reste en lecture seule, n'affiche que des fixtures et ne contient aucune donnée personnelle ou sensible. L'URL ne constitue pas un contrôle d'accès. Avant l'introduction d'activités réelles, de ressentis, de commentaires ou de données issues d'une intégration externe, la stratégie d'accès devra être réévaluée.
+La production V0 reste publique tant qu'elle ne contient que des fixtures non sensibles en lecture seule. Avant tout déploiement V1 connecté à PostgreSQL ou toute donnée réelle, Vercel Authentication doit protéger la production et son fonctionnement doit être vérifié depuis la PWA iPhone.
 
-Les Preview peuvent utiliser la protection standard de Vercel indépendamment de la production. Cette protection relève de la plateforme et ne justifie pas l'ajout d'une authentification dans le code de la V0.
+Les Preview utilisent également la protection Vercel et une base ou branche PostgreSQL distincte de la production. Aucun secret d'écriture de production ne leur est transmis.
 
 ## PWA et responsive
 
@@ -627,4 +638,11 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-03 | Ajouter la catégorie `race`, conserver les blocs `segment` / `repeats` et structurer la récupération des répétitions | Validée |
 | 2026-10-03 | Séparer l'activation choisie du statut temporel calculé et ne stocker ni brouillon ni archive dans le premier périmètre | Validée |
 | 2026-10-03 | Structurer le modèle `.xlsx` en trois feuilles canoniques `Plan`, `Sessions` et `Blocks` | Validée |
+| 2026-10-03 | Utiliser Neon PostgreSQL via Vercel et Drizzle avec des migrations SQL versionnées pour la persistance V1 | Validée |
+| 2026-10-03 | Protéger tous les déploiements contenant des données réelles avec Vercel Authentication, sous réserve d'une validation PWA iOS ; conserver Supabase Auth comme repli | Validée |
+| 2026-10-03 | Utiliser des formulaires par entité avec brouillon local et enregistrement explicite, sans autosave ni brouillon persistant | Validée |
+| 2026-10-03 | Créer un plan à partir d'un nom et d'une période, puis le laisser inactif jusqu'à une activation explicite | Validée |
+| 2026-10-03 | Protéger les mutations par une révision optimiste afin d'empêcher les écrasements silencieux entre appareils | Validée |
+| 2026-10-03 | Versionner le format `.xlsx` sans y exposer les identifiants internes ni l'état actif | Validée |
+| 2026-10-03 | Combiner restauration native PostgreSQL, dumps hors fournisseur et exercice de restauration | Validée |
 
