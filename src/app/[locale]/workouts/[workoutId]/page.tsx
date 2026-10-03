@@ -89,7 +89,7 @@ export default async function WorkoutPage({ params }: Props) {
                 )}
                 {block.kind === "repeats" && block.recovery && (
                   <p className="recovery">
-                    {t.recovery} {target(block.recovery, locale)} {t.between}
+                    {t.recovery} {target(block.recovery.target, locale)} {t.between}
                   </p>
                 )}
                 {block.notes && <p className="block-note">{block.notes}</p>}

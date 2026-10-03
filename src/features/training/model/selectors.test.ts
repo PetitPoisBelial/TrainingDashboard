@@ -81,7 +81,7 @@ test("fixtures preserve invariants and structured intervals", () => {
     count: 4,
     effort: { kind: "distance", meters: 2000 },
     pace: { fast: 210, slow: 212 },
-    recovery: { kind: "duration", seconds: 120 },
+    recovery: { target: { kind: "duration", seconds: 120 } },
     notes: "Trois récupérations trottées, uniquement entre les répétitions.",
   });
 });
