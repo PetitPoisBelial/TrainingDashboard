@@ -130,9 +130,13 @@ Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 1
   idempotente, création et chargement d'agrégat, rollback, révisions concurrentes,
   état actif, contraintes et cascades ; 10 tests réussis (9 sous-tests et leur
   suite parente). Les objets créés ont été nettoyés après exécution.
-- En attente utilisateur : création Neon, secrets limités par environnement,
-  autorisation de migration distante, séparation effective des trois bases/branches,
-  activation Vercel, Preview, recette iPhone et décision finale d'accès privé.
+- Migration Neon development appliquée après autorisation explicite de l'utilisateur :
+  quatre tables, une migration enregistrée, état initial id 1/révision 1/plan actif
+  nul et zéro plan, vérifiés en lecture seule. Aucun secret affiché ou versionné.
+- Configuration des variables Vercel déclarée par l'utilisateur ; séparation effective
+  et portées à confirmer. Restent en attente : migrations Preview/production si
+  nécessaires (autorisation distincte), activation Vercel, Preview, recette iPhone,
+  vérification de la rétention Neon et décision finale d'accès privé.
 - Aucun dump ou exercice de restauration réalisé ; outils PostgreSQL absents.
   Aucun push, PR ou fusion par ce chat. Le lot 3 reste décoché.
 

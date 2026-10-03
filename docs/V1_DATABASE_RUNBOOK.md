@@ -7,8 +7,13 @@ mappings purs et primitives transactionnelles. Aucune page n'utilise PostgreSQL.
 Les tests PostgreSQL ont été exécutés sur une base locale dédiée vide : 10 tests
 réussis (9 sous-tests et leur suite parente), avec nettoyage des objets créés.
 Migration, rollback, concurrence, contraintes et cascades sont vérifiés localement.
-Aucun environnement Neon/Vercel
-n'a été créé ou configuré par ce chat. La recette d'accès iPhone est dans
+La migration initiale a ensuite été appliquée sur la connexion Neon development
+configurée par l'utilisateur, après son autorisation explicite. Le contrôle en
+lecture seule confirme les quatre tables, une migration enregistrée, une ligne
+applicative (id 1, révision 1, plan actif nul) et aucun plan enregistré.
+L'utilisateur indique avoir configuré les variables Vercel ; leur portée et
+la séparation effective des branches restent à confirmer dans les consoles.
+Aucune ressource Neon/Vercel n'a été créée par ce chat. La recette d'accès iPhone est dans
 `V1_PRIVATE_ACCESS_CHECKLIST.md`. Aucun plan personnel ne doit être enregistré avant sa validation.
 
 ## Pilote et contrat d'environnement
