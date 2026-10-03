@@ -65,6 +65,7 @@ export const en = {
     unknownVolume: "Open volume",
   },
   categories: {
+    race: "Race",
     easy: "Easy run",
     recovery: "Recovery",
     "long-run": "Long run",

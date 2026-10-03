@@ -1,3 +1,4 @@
+import type { WorkoutId } from "../model/types";
 import type { TrainingWeek } from "../model/types";
 
 export const trainingWeeks: readonly TrainingWeek[] = [
@@ -6,7 +7,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
     startsOn: "2026-09-28",
     workouts: [
       {
-        id: "2026-09-28-endurance",
+        id: "2026-09-28-endurance" as WorkoutId,
         scheduledOn: "2026-09-28",
         sport: "running",
         category: "easy",
@@ -25,7 +26,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
         notes: "Rester souple et relâché. Ne pas chercher la vitesse.",
       },
       {
-        id: "2026-09-29-intervalles",
+        id: "2026-09-29-intervalles" as WorkoutId,
         scheduledOn: "2026-09-29",
         sport: "running",
         category: "intervals",
@@ -50,7 +51,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
             count: 4,
             effort: { kind: "distance", meters: 2000 },
             pace: { fast: 210, slow: 212 },
-            recovery: { kind: "duration", seconds: 120 },
+            recovery: { target: { kind: "duration", seconds: 120 } },
             notes:
               "Trois récupérations trottées, uniquement entre les répétitions.",
           },
@@ -65,7 +66,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
           "Chercher la régularité sur les quatre répétitions. Volume global estimé, récupérations incluses.",
       },
       {
-        id: "2026-09-30-endurance",
+        id: "2026-09-30-endurance" as WorkoutId,
         scheduledOn: "2026-09-30",
         sport: "running",
         category: "easy",
@@ -82,7 +83,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
         ],
       },
       {
-        id: "2026-09-30-velo",
+        id: "2026-09-30-velo" as WorkoutId,
         scheduledOn: "2026-09-30",
         sport: "cycling",
         category: "recovery",
@@ -99,7 +100,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
         ],
       },
       {
-        id: "2026-10-01-seuil",
+        id: "2026-10-01-seuil" as WorkoutId,
         scheduledOn: "2026-10-01",
         sport: "running",
         category: "tempo",
@@ -117,7 +118,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
             count: 3,
             effort: { kind: "duration", seconds: 600 },
             pace: { fast: 225, slow: 230 },
-            recovery: { kind: "duration", seconds: 120 },
+            recovery: { target: { kind: "duration", seconds: 120 } },
             notes: "Deux récupérations trottées entre les trois efforts.",
           },
           {
@@ -130,7 +131,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
           "Un effort soutenu mais maîtrisé. Le volume total reste une estimation.",
       },
       {
-        id: "2026-10-03-facile",
+        id: "2026-10-03-facile" as WorkoutId,
         scheduledOn: "2026-10-03",
         sport: "running",
         category: "recovery",
@@ -148,7 +149,7 @@ export const trainingWeeks: readonly TrainingWeek[] = [
         ],
       },
       {
-        id: "2026-10-04-longue",
+        id: "2026-10-04-longue" as WorkoutId,
         scheduledOn: "2026-10-04",
         sport: "running",
         category: "long-run",

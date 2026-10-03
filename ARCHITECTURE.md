@@ -409,6 +409,16 @@ Invariants :
 - les identifiants de séance sont uniques dans le plan ;
 - plusieurs séances peuvent partager une date et conservent l'ordre défini dans le plan.
 
+### Contrat du domaine implémenté au lot 2
+
+`plans/model` dépend uniquement du domaine Training. La construction d'un plan et le changement de période renvoient un résultat discriminé `ok`, avec une valeur ou des erreurs codées et des chemins de champs. Les erreurs transversales identifient les séances concernées. Ces fonctions attendent un candidat typé ; le décodage des objets de formulaire, de base ou de fichier restera dans leurs adaptateurs respectifs.
+
+Le nom est normalisé en supprimant les blancs périphériques et en réduisant les suites de blancs à un espace. Sa limite est de **120 points de code Unicode après normalisation**. Les identifiants opaques sont des chaînes non vides sans blancs périphériques, sans contrainte UUID ; les constructeurs de frontière préservent leur valeur. `LocalDate` conserve sa forme TypeScript compatible V0 et un parseur vérifie les dates calendaires réelles au format exact `YYYY-MM-DD` (années 0001 à 9999).
+
+La construction trie les séances par date de façon stable : l'ordre du tableau est conservé pour une même date et représente la position d'exécution. Aucune position redondante n'est ajoutée à l'objet métier. La projection `PlanWeek` est compatible avec `TrainingWeek` et expose les bornes de couverture du plan pour les semaines partielles. `planWeekOn` refuse une date hors période ; `projectTrainingWeek` accepte n'importe quel jour d'une semaine intersectant le plan, notamment son lundi. Les projections attendent un plan préalablement validé.
+
+`Workout` garde ses volumes facultatifs pour préserver les fixtures historiques non quantifiées, en particulier `raceBlock2026`. Les volumes requis selon le sport sont imposés par la validation à la construction d'un plan V1, sans inventer de distance pour ces exemples. Les segments libres restent permis ; un footing simple sans bloc reçoit un segment continu lors de la construction. La récupération est structurée sous `target`, avec allure et notes facultatives, et les blocs peuvent porter un `label`. La source du dashboard reste celle de la V0.
+
 ### Activation et statut temporel
 
 L'activation n'est pas un statut métier du plan : l'application conserve séparément la référence du plan actif et garantit qu'il n'en existe au plus qu'un. Un nouveau plan importé est inactif jusqu'à une action explicite de l'utilisateur.
@@ -645,4 +655,5 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-03 | Protéger les mutations par une révision optimiste afin d'empêcher les écrasements silencieux entre appareils | Validée |
 | 2026-10-03 | Versionner le format `.xlsx` sans y exposer les identifiants internes ni l'état actif | Validée |
 | 2026-10-03 | Combiner restauration native PostgreSQL, dumps hors fournisseur et exercice de restauration | Validée |
+| 2026-10-03 | Borner le nom normalisé à 120 points de code Unicode et conserver les volumes inconnus des fixtures V0 hors des plans V1 validés | Implémentée au lot 2 |
 

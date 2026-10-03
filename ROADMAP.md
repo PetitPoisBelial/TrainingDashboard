@@ -78,7 +78,7 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 ## V1 — Gestion des plans
 
-**Statut : architecture validée, implémentation non commencée.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
+**Statut : architecture validée, lot 2 — Domaine et validation terminé localement.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
 
 ### Objectif
 
@@ -103,7 +103,7 @@ Permettre d'importer, consulter, activer et faire évoluer plusieurs plans d'ent
 Les lots sont ordonnés. Chaque PR dépend uniquement des lots précédents déjà fusionnés et ne doit pas exiger plusieurs fonctionnalités inachevées en parallèle.
 
 1. [x] **Architecture documentaire** — enregistrer les décisions, critères d'acceptation, flux, routes, schéma logique, risques et ordre des lots.
-2. [ ] **Domaine et validation** — finaliser `TrainingPlan`, étendre les types Training, ajouter les invariants, projections, erreurs typées et tests purs, sans interface ni persistance.
+2. [x] **Domaine et validation** — finaliser `TrainingPlan`, étendre les types Training, ajouter les invariants, projections, erreurs typées et tests purs, sans interface ni persistance.
 3. [ ] **Accès privé et persistance** — valider Vercel Authentication dans Safari et la PWA iOS, créer la base de développement, le schéma, les migrations, les transactions, les révisions, la séparation Preview/production et le premier runbook de sauvegarde.
 4. [ ] **Lecture verticale des plans** — persister des données de développement puis livrer la liste, l'état vide, le détail, les semaines, les chargements, les erreurs et les 404.
 5. [ ] **Création minimale** — créer un plan inactif à partir d'un nom, d'une période et d'une description facultative.
@@ -239,7 +239,9 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-La V0 est clôturée et l'architecture V1 est validée. Le prochain jalon est le lot 2, domaine et validation, après fusion de la PR documentaire. Le premier déploiement connecté à PostgreSQL restera bloqué tant que Vercel Authentication n'aura pas été validée dans Safari iOS et dans la PWA installée. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
+La V0 est clôturée et le lot 2 de la V1 est terminé localement. Le prochain jalon est le lot 3, accès privé et persistance, après revue et fusion du lot 2. Le premier déploiement connecté à PostgreSQL restera bloqué tant que Vercel Authentication n'aura pas été validée dans Safari iOS et dans la PWA installée. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
+
+Validation du lot 2 le 3 octobre 2026 : 32 tests purs réussis (16 nouveaux et 16 existants), vérification TypeScript, lint et build de production réussis. Le domaine couvre les identifiants opaques, les dates ISO valides, les invariants du plan et des séances, les changements de période, les statuts explicites, les semaines complètes ou partielles, les semaines de repos et les totaux séparés. Les fixtures et la source du dashboard V0 sont préservées ; seule la lecture de la récupération est adaptée à son objet structuré. Aucune dépendance, persistance, interface de gestion ou fonctionnalité des lots suivants n'est ajoutée.
 
 Recette finale confirmée par l'utilisateur : liens, navigation clavier et safe areas vérifiés. Cette validation complète les contrôles techniques, de production et sur iPhone ci-dessous et clôture la V0.
 

@@ -1,3 +1,4 @@
+import type { WorkoutId } from "../model/types";
 import type {
   LocalDate,
   Pace,
@@ -34,7 +35,7 @@ function repeatWorkout({
   notes,
 }: RepeatWorkoutInput): Workout {
   return {
-    id: `${date}-${slug}`,
+    id: `${date}-${slug}` as WorkoutId,
     scheduledOn: date,
     sport: "running",
     category,
@@ -47,7 +48,7 @@ function repeatWorkout({
         count,
         effort,
         pace,
-        recovery,
+        recovery: recovery ? { target: recovery } : undefined,
         notes: blockNotes,
       },
     ],
@@ -64,7 +65,7 @@ function longRun(
   notes?: string,
 ): Workout {
   return {
-    id: `${date}-sortie-longue`,
+    id: `${date}-sortie-longue` as WorkoutId,
     scheduledOn: date,
     sport: "running",
     category: "long-run",
@@ -91,7 +92,7 @@ function race(
   notes: string,
 ): Workout {
   return {
-    id: `${date}-${slug}`,
+    id: `${date}-${slug}` as WorkoutId,
     scheduledOn: date,
     sport: "running",
     category: "other",
@@ -113,7 +114,7 @@ function race(
 
 function strides(date: LocalDate, slug: string, notes: string): Workout {
   return {
-    id: `${date}-${slug}`,
+    id: `${date}-${slug}` as WorkoutId,
     scheduledOn: date,
     sport: "running",
     category: "other",
@@ -284,7 +285,7 @@ export const raceBlock2026 = [
         blockNotes: "Unique petite séance structurée de la semaine.",
       }),
       {
-        id: "2026-10-11-course-20km",
+        id: "2026-10-11-course-20km" as WorkoutId,
         scheduledOn: "2026-10-11",
         sport: "running",
         category: "tempo",
@@ -475,7 +476,7 @@ export const raceBlock2026 = [
     startsOn: "2026-11-16",
     workouts: [
       {
-        id: "2026-11-21-seuil-optionnel",
+        id: "2026-11-21-seuil-optionnel" as WorkoutId,
         scheduledOn: "2026-11-21",
         sport: "running",
         category: "tempo",

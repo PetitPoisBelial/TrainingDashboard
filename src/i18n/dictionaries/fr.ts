@@ -65,6 +65,7 @@ export const fr = {
     unknownVolume: "Volume libre",
   },
   categories: {
+    race: "Compétition",
     easy: "Endurance",
     recovery: "Récupération",
     "long-run": "Sortie longue",
