@@ -8,7 +8,8 @@ sa décision explicite. Les migrations Preview/production restent à autoriser
 séparément avant la première utilisation de ces bases.
 
 Fondation implémentée : schéma Drizzle, migration SQL versionnée, client Node.js serveur,
-mappings purs et primitives transactionnelles. Aucune page n'utilise PostgreSQL.
+mappings purs et primitives transactionnelles. Le lot 4 ajoute les lectures
+PostgreSQL aux seules pages Plan ; le dashboard reste sur les fixtures V0.
 Les tests PostgreSQL ont été exécutés sur une base locale dédiée vide : 10 tests
 réussis (9 sous-tests et leur suite parente), avec nettoyage des objets créés.
 Migration, rollback, concurrence, contraintes et cascades sont vérifiés localement.
@@ -20,7 +21,49 @@ L'utilisateur indique avoir configuré les variables Vercel ; leur portée et
 la séparation des connexions ont été confirmées par l'utilisateur le 4 octobre 2026.
 La fenêtre History window relevée est de 6 heures, maximum de son offre actuelle.
 Aucune ressource Neon/Vercel n'a été créée par ce chat. La recette d'accès iPhone est dans
-`V1_PRIVATE_ACCESS_CHECKLIST.md`. Aucun plan personnel ne doit être enregistré avant sa validation.
+`V1_PRIVATE_ACCESS_CHECKLIST.md`. Le lot 3 est clôturé ; les observations de session
+restantes sont différées et tout problème ultérieur sera traité comme bug.
+
+## Seed de démonstration — lot 4
+
+Commande explicite : `pnpm db:seed:development`. Le fichier opérateur ignoré
+`.env.database.local` peut contenir les variables suivantes, sans être versionné :
+
+| Variable | Valeur attendue |
+| --- | --- |
+| `TRAINING_SEED_DATABASE_URL` | Connexion de la seule branche non-production autorisée |
+| `TRAINING_SEED_ENV` | `development` ou `preview` ; jamais `production` |
+| `TRAINING_CONFIRM_SEED` | Identique à l'environnement retenu |
+| `TRAINING_SEED_ALLOWED_HOST` | Hôte exact de cette connexion, vérifié dans Neon |
+| `TRAINING_SEED_ALLOWED_DATABASE` | Nom exact de cette base, vérifié dans Neon |
+| `TRAINING_SEED_TARGET_NAME` | Nom opérateur non sensible (lettres, chiffres, tirets, underscores), par exemple `neon-development` |
+| `TRAINING_PRODUCTION_DATABASE_URL` | Si disponible sur le poste, comparaison de refus supplémentaire ; jamais utilisée pour écrire |
+
+Le script refuse les environnements production et Vercel, les confirmations
+absentes, les hôtes/bases différents de la liste autorisée et les noms portant
+`prod`. Ces confirmations opérateur ne prouvent pas à elles seules l'association
+Neon : contrôler indépendamment la branche et son endpoint avant de les renseigner.
+Ne jamais désigner un endpoint de production comme développement. Aucun secret
+de seed n'est nécessaire dans Vercel : ce script s'exécute uniquement sur le poste.
+
+1. Choisir la branche Neon Development ou une Preview distincte ; vérifier que
+   le schéma initial est déjà migré. Toute migration distante exige un autre accord.
+2. Préparer les variables hors Git. Exécuter `pnpm db:seed:development` : aucun
+   accès réseau, affichage environnement/nom/hôte/base, jamais l'URL ou l'utilisateur.
+3. Demander l'autorisation explicite pour cette cible précise : création du plan
+   fictif `demo:v1:read-vertical` et de ses 9 séances/blocs, sans activation.
+   Un accord Development ne couvre jamais une Preview.
+4. Après accord seulement, exécuter `pnpm db:seed:development --write`.
+   Résultat `created` ou `already-present`. Échec : détails de connexion masqués.
+5. Vérifier les pages Plan avec la connexion applicative de cette même branche.
+   Pour la Preview, l'utilisateur pousse la branche et configure lui-même la portée
+   des variables Vercel après contrôle de la protection. Aucun secret de production.
+
+Le seed valide via le domaine et les mappings de persistance, puis insère l'agrégat
+dans une transaction. Une relance compare le contenu métier existant : aucune
+révision ni date technique n'est modifiée. Une collision de plan ou de séance est
+refusée et annulée. Aucun autre plan n'est remplacé ou effacé, aucun état actif
+n'est modifié. Les données ne figurent dans aucune migration SQL.
 
 ## Pilote et contrat d'environnement
 
@@ -161,6 +204,15 @@ par l'exécution. Ne pas lancer simultanément une autre application sur cette b
 Elle prouve création, chargement ordonné, rollback par collision d'enfant,
 révisions concurrentes, état actif, contraintes et cascades. Elle ne prouve pas
 la connectivité Neon ni la configuration Vercel.
+Les tests du lot 4 ajoutent lectures groupées, totaux, association plan/séance,
+panne distincte de l'absence, seed idempotent et refus des collisions sans activation.
+
+Après `pnpm build`, lancer séparément `pnpm test:plans:http` avec la même configuration
+de test : elle exige aussi une base locale vide, prend le verrou de test, prépare
+le schéma et le seed, puis démarre le build sur `127.0.0.1:3104` avec cette connexion
+locale uniquement. Elle vérifie FR/EN, V0, vrais statuts HTTP 404, absence de cache
+public et récupération après panne. Le serveur est arrêté et les objets propres
+à l'exécution nettoyés. Ne pas lancer les deux suites simultanément.
 Sans instance/configuration, la commande échoue explicitement ; elle ne déclare
 aucun test réussi par un mock ou par un skip. Après un arrêt forcé, recréer
 manuellement la base locale jetable avant de relancer.

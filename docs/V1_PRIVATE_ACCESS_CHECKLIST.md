@@ -12,8 +12,9 @@ cas de session et autres observations non réalisés au fil de l'eau, sans bloqu
 la clôture du lot 3. Les cases non cochées ci-dessous restent des observations
 à effectuer ; elles ne sont pas présentées comme des tests réussis.
 Preview testée : https://training-dashboard-qdkwymvmd-petitpoisbelial.vercel.app/fr.
-Les pages affichent toujours les fixtures V0 ; cette branche n'ajoute aucune
-lecture de données privées ni mutation accessible depuis le navigateur.
+Lors de cette recette du lot 3, les pages affichaient les fixtures V0 ; sa branche
+n'ajoutait aucune lecture de données privées ni mutation depuis le navigateur.
+Le lot 4 connecte maintenant les pages Plan à PostgreSQL ; le dashboard reste en V0.
 
 ## Ce que garantit la documentation actuelle
 
@@ -115,9 +116,10 @@ d'offre n'est demandé. Les autres cas non observés seront suivis au fil de l'e
 selon la décision explicite de l'utilisateur du 4 octobre 2026.
 
 Rapporter ici uniquement les observations. Si la PWA boucle, perd la session
-de façon inacceptable ou ne revient pas après connexion, le jalon est bloqué :
-documenter le résultat et demander la validation du repli Supabase Auth avant
-de changer l'architecture. L'accès privé et la séparation des environnements ont
+de façon inacceptable ou ne revient pas après connexion, traiter ce problème
+comme un bug d'accès et documenter le résultat. Tout changement vers le repli
+Supabase Auth exige une décision utilisateur distincte ; il ne rouvre pas
+automatiquement le lot 3. L'accès privé et la séparation des environnements ont
 été confirmés par l'utilisateur ; le lot 3 est clôturé avec le report explicite
 des observations restantes. Toute régression d'accès devra être examinée avant
 de poursuivre l'utilisation de données privées.

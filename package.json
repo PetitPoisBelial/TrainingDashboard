@@ -16,7 +16,9 @@
     "db:generate": "drizzle-kit generate",
     "db:check": "drizzle-kit check",
     "db:migrate": "node --env-file-if-exists=.env.database.local --import tsx scripts/db-migrate.ts",
-    "test:integration": "node --env-file-if-exists=.env.database.test.local --conditions=react-server --import tsx --test tests/integration/*.test.ts"
+    "test:integration": "node --env-file-if-exists=.env.database.test.local --conditions=react-server --import tsx --test tests/integration/*.test.ts",
+    "db:seed:development": "node --env-file-if-exists=.env.database.local --conditions=react-server --import tsx scripts/db-seed-development.ts",
+    "test:plans:http": "node --env-file-if-exists=.env.database.test.local --conditions=react-server --import tsx --test tests/http/*.test.ts"
   },
   "dependencies": {
     "@vercel/functions": "3.9.10",

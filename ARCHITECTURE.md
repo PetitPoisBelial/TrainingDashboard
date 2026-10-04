@@ -2,7 +2,7 @@
 
 ## Statut
 
-La V0 est clôturée. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. L'utilisateur a confirmé la recette finale des liens, de la navigation clavier et des safe areas. L'architecture de la V1 — Gestion des plans est validée ; le prochain jalon est l'implémentation progressive du domaine, de l'accès privé et de la persistance décrite dans `docs/V1_PLANS_DESIGN.md`.
+La V0 est clôturée. La navigation et l'internationalisation sont déployées sur Vercel. L'installation, l'affichage standalone, l'expérience générale et la restauration de la langue mémorisée ont été validés sur iPhone réel. L'utilisateur a confirmé la recette finale des liens, de la navigation clavier et des safe areas. Les lots 1 à 3 de la V1 sont fusionnés ; le lot 3 est clôturé par décision utilisateur du 4 octobre 2026. La lecture des plans du lot 4 est implémentée et vérifiée localement, avec recette Preview/iPhone en attente. Les observations différées de session seront traitées comme bugs si elles se manifestent.
 
 ## Principes
 
@@ -573,7 +573,10 @@ Le dépôt GitHub est connecté à Vercel avec `main` comme branche de productio
 - Aucun workflow GitHub Actions, fichier `vercel.json`, secret ou variable d'environnement n'est nécessaire pour la V0.
 - Les mises à jour de `main` déclenchent un nouveau déploiement de production.
 
-La production V0 reste publique tant qu'elle ne contient que des fixtures non sensibles en lecture seule. Avant tout déploiement V1 connecté à PostgreSQL ou toute donnée réelle, Vercel Authentication doit protéger la production et son fonctionnement doit être vérifié depuis la PWA iPhone.
+La production est désormais protégée par Vercel Authentication, conformément à
+la validation utilisateur du lot 3. Cette protection doit rester active sur tous
+les déploiements connectés à PostgreSQL. Les observations de session différées
+seront suivies au fil de l'eau, sans rouvrir ce lot.
 
 Les Preview utilisent également la protection Vercel et une base ou branche PostgreSQL distincte de la production. Aucun secret d'écriture de production ne leur est transmis.
 
@@ -644,7 +647,39 @@ connexions applicatives ou Neon. Le [runbook](docs/V1_DATABASE_RUNBOOK.md) décr
 les garanties du domaine et de la base ainsi que les opérations manuelles.
 La disponibilité actuelle de Vercel Authentication pour la production sur toutes
 les offres ne dispense pas de sélectionner All Deployments ni de valider l'iPhone.
-La [recette](docs/V1_PRIVATE_ACCESS_CHECKLIST.md) reste en attente.
+La [recette](docs/V1_PRIVATE_ACCESS_CHECKLIST.md) est validée par l'utilisateur
+le 4 octobre 2026 : lot 3 clôturé, observations complémentaires de session
+différées au fil de l'eau. Tout problème ultérieur sera traité comme bug.
+
+### Lecture des plans — lot 4
+
+Les pages Plan lisent exclusivement PostgreSQL côté serveur. Liste, agrégat et
+séance dans son plan utilisent des fonctions explicites, sans repository générique.
+La liste utilise quatre lectures groupées dans un instantané `REPEATABLE READ READ ONLY`,
+indépendamment du nombre de plans ; statuts, semaines et totaux restent dérivés.
+`connection()` précède l'accès DB et l'horloge Paris : aucune lecture au build.
+La mémoïsation React de l'agrégat est limitée à une requête de rendu, sans cache
+persistant ou partagé entre utilisateurs. Le dashboard et la route de séance V0
+conservent leurs données locales jusqu'au lot 6.
+
+Les contrôles d'existence des layouts précèdent les frontières de chargement des
+groupes `(list)` et `(detail)` : une ressource inconnue produit HTTP 404 avant
+diffusion du chargement. Les pages refont aussi le contrôle pour les navigations
+qui réutilisent un layout. Les identifiants de route sont décodés une seule fois
+à la frontière (Next.js 16.3 transmet les segments échappés), puis validés comme
+identifiants opaques. Les erreurs DB/configuration sont distinguées de l'absence
+et ne retournent jamais les erreurs brutes du pilote. Le bouton de récupération
+des erreurs inattendues utilise l'API `retry` de cette version Next.js.
+
+Le seed opérateur est séparé des migrations : insertion transactionnelle de la
+fixture validée, jamais de remplacement, suppression ou activation. Une collision
+avec un contenu différent est refusée. L'environnement non-production, l'hôte et
+la base autorisés sont explicitement reconnus par l'opérateur ; toute écriture
+distante demande une autorisation distincte. Sans `--write`, aucune connexion.
+
+La semaine `?week=` est normalisée vers le lundi. En son absence, la semaine
+courante intersectant le plan est retenue, sinon la première semaine. Une valeur
+invalide, répétée ou extérieure produit un message explicite et la première semaine.
 
 Toute décision structurante doit être ajoutée ici avec sa date, son contexte et sa justification.
 
@@ -682,4 +717,3 @@ Toute décision structurante doit être ajoutée ici avec sa date, son contexte 
 | 2026-10-03 | Versionner le format `.xlsx` sans y exposer les identifiants internes ni l'état actif | Validée |
 | 2026-10-03 | Combiner restauration native PostgreSQL, dumps hors fournisseur et exercice de restauration | Validée |
 | 2026-10-03 | Borner le nom normalisé à 120 points de code Unicode et conserver les volumes inconnus des fixtures V0 hors des plans V1 validés | Implémentée au lot 2 |
-

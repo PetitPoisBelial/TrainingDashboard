@@ -10,6 +10,8 @@ import type { TrainingPlan, TrainingPlanId } from "../../src/features/plans/mode
 import type { WorkoutId } from "../../src/features/training/model/types";
 import { insertPlanAggregate, loadApplicationState, loadPlan, replaceActivePlan, replacePlanAggregate } from "../../src/features/plans/server/persistence";
 import { InvalidPlanError, PersistenceError, RevisionConflictError } from "../../src/features/plans/server/errors";
+import { listPlanSummaries, loadPlanWorkout, insertPlanAggregateIfAbsent } from "../../src/features/plans/server/persistence";
+import { demoPlan } from "../../src/features/plans/model/demo-plan";
 
 function fixture(id: string): TrainingPlan {
   return { id: id as TrainingPlanId, name: "Synthetic integration fixture", startsOn: "2026-10-01", endsOn: "2026-10-07", workouts: [
@@ -44,6 +46,14 @@ test("PostgreSQL migration, constraints and atomic primitives (empty dedicated l
       const tables = await pool.query("SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename");
       assert.deepEqual(tables.rows.map((r) => r.tablename), ["application_state", "training_plans", "workout_blocks", "workouts"]);
       assert.equal((await loadApplicationState(db)).revision, 1);
+    });
+    await t.test("empty list is distinct from persistence failure", async () => {
+      assert.deepEqual(await listPlanSummaries(db, "2026-10-04"), { activePlanId: null, plans: [] });
+      await db.execute(sql`ALTER TABLE training_plans RENAME TO temporarily_unavailable`);
+      try {
+        await assert.rejects(listPlanSummaries(db, "2026-10-04"), PersistenceError);
+        await assert.rejects(loadPlan(db, "absent" as TrainingPlanId), PersistenceError);
+      } finally { await db.execute(sql`ALTER TABLE temporarily_unavailable RENAME TO training_plans`); }
     });
     await t.test("atomic creation and complete ordered aggregate load", async () => {
       const plan = fixture("creation");
@@ -99,6 +109,39 @@ test("PostgreSQL migration, constraints and atomic primitives (empty dedicated l
       assert.equal(results.filter((r) => r.status === "fulfilled").length, 1);
       assert.equal((await loadApplicationState(db)).revision, 3);
       await replaceActivePlan(db, null, 3);
+    });
+    await t.test("development seed is idempotent, inactive and preserves foreign data", async () => {
+      const before = await loadApplicationState(db);
+      const foreign = await loadPlan(db, "creation" as TrainingPlanId);
+      const collisionFixture = fixture("seed-child-collision");
+      const collision = { ...collisionFixture, workouts: [{ ...collisionFixture.workouts[0], id: demoPlan.workouts[0].id }] };
+      await insertPlanAggregate(db, collision);
+      const collisionBefore = await loadPlan(db, collision.id);
+      await assert.rejects(insertPlanAggregateIfAbsent(db, demoPlan), PersistenceError);
+      assert.equal(await loadPlan(db, demoPlan.id), undefined);
+      assert.deepEqual(await loadPlan(db, collision.id), collisionBefore);
+      await db.delete(trainingPlans).where(eq(trainingPlans.id, collision.id));
+      assert.equal(await insertPlanAggregateIfAbsent(db, demoPlan), "created");
+      const first = await loadPlan(db, demoPlan.id);
+      assert.equal(await insertPlanAggregateIfAbsent(db, demoPlan), "already-present");
+      assert.deepEqual(await loadPlan(db, demoPlan.id), first);
+      assert.deepEqual(await loadApplicationState(db), before);
+      assert.equal((await loadApplicationState(db)).activePlanId, null);
+      assert.deepEqual(await loadPlan(db, "creation" as TrainingPlanId), foreign);
+      assert.deepEqual(first?.plan, demoPlan);
+      assert.deepEqual(await loadPlanWorkout(db, demoPlan.id, demoPlan.workouts[0].id), demoPlan.workouts[0]);
+      assert.equal(await loadPlanWorkout(db, demoPlan.id, fixture("creation").workouts[0].id), undefined);
+      assert.equal(await loadPlanWorkout(db, "unknown" as TrainingPlanId, demoPlan.workouts[0].id), undefined);
+      assert.equal(await loadPlanWorkout(db, demoPlan.id, "unknown" as WorkoutId), undefined);
+      const list = await listPlanSummaries(db, "2026-10-04");
+      assert.ok(list.plans.length > 1);
+      assert.equal(list.plans[0].id, demoPlan.id);
+      assert.deepEqual(list.plans.map((p) => p.id), [...list.plans].sort((a, b) => a.startsOn.localeCompare(b.startsOn) || a.id.localeCompare(b.id)).map((p) => p.id));
+      assert.deepEqual(await listPlanSummaries(db, "2026-10-04"), list);
+      assert.deepEqual(list.plans.find((p) => p.id === demoPlan.id)?.totals, { runningMeters: 114000, cyclingMeters: 20000, cyclingSeconds: 3600, workoutCount: 9 });
+      await db.update(trainingPlans).set({ name: "Foreign collision" }).where(eq(trainingPlans.id, demoPlan.id));
+      await assert.rejects(insertPlanAggregateIfAbsent(db, demoPlan), PersistenceError);
+      assert.equal((await loadPlan(db, demoPlan.id))?.plan.name, "Foreign collision");
     });
     await t.test("principal SQL constraints reject invalid bypass writes", async () => {
       const workout = fixture("creation").workouts[0];

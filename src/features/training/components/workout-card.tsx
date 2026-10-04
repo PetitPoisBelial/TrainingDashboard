@@ -8,15 +8,17 @@ export function WorkoutCard({
   workout,
   locale,
   dictionary,
+  href,
 }: {
   workout: Workout;
   locale: Locale;
   dictionary: Dictionary;
+  href?: string;
 }) {
   return (
     <Link
       className="workout-card"
-      href={localePath(locale, `/workouts/${workout.id}`)}
+      href={href ?? localePath(locale, `/workouts/${workout.id}`)}
     >
       <div>
         <span className={`tag tag-${workout.category}`}>

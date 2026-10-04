@@ -1,0 +1,12 @@
+.stack { display: grid; gap: 20px; min-width: 0; padding-bottom: 24px; overflow-wrap: anywhere; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; display: grid; gap: 16px; min-width: 0; }
+.meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 14px; }
+.totals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0; }
+.totals dt { color: var(--muted); font-size: 12px; margin-bottom: 6px; }
+.totals dd { margin: 0; color: var(--gold); font-size: 20px; }
+.navigation { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+.control { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--text); background: var(--surface-raised); font: inherit; cursor: pointer; }
+.control:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+.disabled { color: var(--muted); cursor: default; }
+.day { display: grid; gap: 12px; border-top: 1px solid var(--line); padding-top: 20px; }
+.copy { line-height: 1.7; white-space: pre-wrap; }

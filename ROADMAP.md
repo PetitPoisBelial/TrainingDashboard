@@ -279,7 +279,30 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-La V0 est clôturée, le lot 2 est fusionné et le lot 3 est validé par l'utilisateur le 4 octobre 2026. Le prochain jalon est le lot 4 — Lecture verticale des plans, après revue et fusion de la branche du lot 3. Vercel Authentication est conservée ; les observations complémentaires de session seront suivies au fil de l'eau conformément à la décision de l'utilisateur. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
+La V0 est clôturée et les lots 1, 2 et 3 sont fusionnés dans `main`. Le lot 3 est clôturé par décision utilisateur du 4 octobre 2026. Le lot 4 — Lecture verticale des plans est implémenté et vérifié localement sur sa branche ; sa recette Preview/iPhone reste en attente. Vercel Authentication est conservée ; les observations complémentaires de session seront suivies au fil de l'eau et traitées comme bugs si elles se manifestent, sans rouvrir le lot 3. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
+
+État réel du lot 4 au 4 octobre 2026 :
+
+- Implémenté : fixture V1 valide, seed non-production explicite et transactionnel,
+  lectures groupées PostgreSQL, liste, détail, semaines et route canonique des séances.
+  États vide, inactif, repos, chargement, configuration absente, panne et vraie 404
+  distincts ; FR/EN, totaux séparés et date Paris injectée. Dashboard et détails V0 préservés.
+- Vérifié : 45 tests unitaires ; 12 tests d'intégration sur PostgreSQL local dédié
+  (dont rollback du seed, idempotence, refus des collisions et état actif inchangé) ;
+  9 tests HTTP du build de production avec PostgreSQL local dédié (FR/EN, lectures,
+  vrais statuts 404, en-têtes sans cache public, panne/récupération et régression V0).
+  TypeScript, lint, build sans variable PostgreSQL et `db:check` réussis.
+- Seed opérateur exécuté uniquement sur une base PostgreSQL 18 locale temporaire :
+  mode sans écriture, création puis relance `already-present`. Plan inactif et
+  consultable depuis l'onglet Plan ; aucun accès distant, aucune nouvelle migration.
+- Recette Chromium locale : liste, détail, semaine courante et partielle, repos,
+  séance structurée, erreurs et 404 ; FR/EN et conservation de la semaine.
+  Largeurs 320, 390 et 1280 px sans débordement horizontal, commandes de 44 px,
+  navigation Tab/Entrée avec focus visible. Cette recette ne remplace pas Safari iOS réel.
+- En attente : reconnaissance et autorisation du seed Neon Development ; éventuelle
+  cible Preview séparée, migration/seed explicitement autorisés, push/déploiement
+  par l'utilisateur et recette Safari/PWA sur iPhone. Aucun de ces points n'est
+  déclaré réussi. Le lot 4 reste non coché jusqu'à cette validation ; lot 5 non commencé.
 
 Validation du lot 2 le 3 octobre 2026 : 32 tests purs réussis (16 nouveaux et 16 existants), vérification TypeScript, lint et build de production réussis. Le domaine couvre les identifiants opaques, les dates ISO valides, les invariants du plan et des séances, les changements de période, les statuts explicites, les semaines complètes ou partielles, les semaines de repos et les totaux séparés. Les fixtures et la source du dashboard V0 sont préservées ; seule la lecture de la récupération est adaptée à son objet structuré. Aucune dépendance, persistance, interface de gestion ou fonctionnalité des lots suivants n'est ajoutée.
 
@@ -294,4 +317,3 @@ Validation de production du 2 octobre 2026 : <https://training-dashboard-snowy.v
 Validation du 1er octobre 2026 : lint, TypeScript, 10 tests (dont 3 sur la navigation) et build réussis. Les quatre sections et le détail répondent en HTTP 200 ; une séance inconnue répond en 404. À cette date, le contrôle interactif et visuel restait à faire : le navigateur intégré avait refusé les actions depuis sa page interne d'erreur de connexion. Ces points ont depuis été validés, y compris les safe areas lors de la recette finale.
 
 Validation locale avant l'ajout de la navigation multi-page : lint, TypeScript, 7 tests métier et build réussis. Dashboard et détail contrôlés dans le navigateur à des largeurs de 320, 390 et 1280 px, sans débordement horizontal ; navigation et réponse 404 vérifiées. Ces contrôles Chromium ne remplacent pas un test sur iPhone réel.
-

@@ -1,6 +1,6 @@
 # Training Dashboard
 
-Dashboard personnel de course à pied, mobile-first. La V0 affiche un plan local, les sept jours de la semaine, le volume de course, les séances du jour, la prochaine séance clé et le détail des blocs. Aucune base de données, authentification ou intégration externe.
+Dashboard personnel de course à pied, mobile-first. Le dashboard V0 conserve ses données locales, ses sept jours et le détail des blocs. La V1 ajoute la consultation privée des plans enregistrés dans PostgreSQL. Aucune intégration Strava à ce stade.
 
 ## Démarrer
 
@@ -31,7 +31,7 @@ Les tests couvrent les dates Paris, les frontières de semaine, les années biss
 
 ## Navigation
 
-Le menu partagé propose **Accueil** (`/fr`), **Plan** (`/fr/plan`), **Activités** (`/fr/activities`) et **Analyses** (`/fr/insights`). Les mêmes pages sont disponibles sous `/en`. Le menu reste en bas sur mobile et devient latéral à partir de 1000 px. Le détail d'une séance active la section Plan. Les trois nouvelles sections affichent des pages d'attente explicites.
+Le menu partagé propose **Accueil** (`/fr`), **Plan** (`/fr/plan`), **Activités** (`/fr/activities`) et **Analyses** (`/fr/insights`). Les mêmes pages sont disponibles sous `/en`. Le menu reste en bas sur mobile et devient latéral à partir de 1000 px. Plan consulte PostgreSQL : liste, détail, semaine sélectionnée par `?week=YYYY-MM-DD` et séances persistées. Activités et Analyses restent des pages d'attente. Le dashboard et `/[locale]/workouts/[workoutId]` conservent les fixtures V0 jusqu'au lot 6.
 
 Le sélecteur **FR | EN** se trouve dans l'en-tête mobile et sous le menu latéral sur ordinateur. Il conserve la page, les paramètres et l'ancre, et mémorise le choix pendant un an. `/` et les anciennes URL sans locale redirigent vers ce choix, ou vers le français par défaut. Une URL explicite `/fr` ou `/en` conserve toujours sa propre langue. Les dates et nombres suivent `fr-FR` ou `en-GB`, avec des unités métriques.
 
@@ -61,8 +61,10 @@ Voir `PROJECT.md`, `ARCHITECTURE.md` et `ROADMAP.md` pour le périmètre et les 
 
 ## Fondation PostgreSQL V1 — lot 3
 
-L'interface continue à utiliser les fixtures V0. Le schéma, les mappings et les
-transactions V1 sont préparés côté serveur sans connexion au dashboard.
+Le lot 3 est clôturé par décision utilisateur du 4 octobre 2026. Les observations
+restantes d'expiration/perte de session sont différées et seront traitées comme bugs
+si elles se manifestent ; elles ne bloquent pas le lot 4. Les pages Plan lisent
+désormais PostgreSQL côté serveur ; le dashboard conserve ses fixtures V0.
 `pnpm dev` et `pnpm build` ne demandent aucune variable PostgreSQL.
 
 ```sh
@@ -81,6 +83,47 @@ Les migrations sont exclusivement explicites avec `pnpm db:migrate`, après
 configuration opérateur et autorisation pour toute cible distante. Voir le
 [runbook](docs/V1_DATABASE_RUNBOOK.md) pour les variables, le provisionnement Neon,
 la séparation développement/Preview/production et les sauvegardes.
-La [checklist d'accès privé](docs/V1_PRIVATE_ACCESS_CHECKLIST.md) décrit le jalon
-Vercel Authentication / Safari / PWA iOS encore en attente. Aucune donnée réelle
-avant validation ; le lot 3 n'est pas encore clôturé.
+La [checklist d'accès privé](docs/V1_PRIVATE_ACCESS_CHECKLIST.md) conserve les résultats
+validés et les observations différées, sans les déclarer réalisées.
+
+## Démonstration PostgreSQL — lot 4
+
+Le seed est une commande opérateur, jamais une migration, un build ou une action UI.
+Il crée un plan fictif **inactif**, 9 séances (114 km course, 20 km / 1 h vélo),
+du 23 septembre au 18 octobre 2026. Les identifiants `demo:v1:*` lui sont réservés.
+Il réutilise les prescriptions V0, inclut une course et une semaine entière de repos.
+Les textes libres restent français dans l'interface anglaise.
+
+Configurer les variables `TRAINING_SEED_*` dans le fichier ignoré
+`.env.database.local`, selon le [runbook](docs/V1_DATABASE_RUNBOOK.md#seed-de-démonstration--lot-4).
+Ne jamais utiliser la production. Vérifier la branche réelle dans Neon, puis obtenir
+l'autorisation explicite de l'utilisateur avant toute écriture distante.
+
+```sh
+pnpm db:seed:development
+# Après contrôle de la cible et autorisation distante :
+pnpm db:seed:development --write
+```
+
+Sans `--write`, la commande affiche seulement la cible reconnue, sans connexion.
+Avec `--write`, elle valide et insère l'agrégat dans une transaction. Une relance
+identique ne change aucune ligne. Une collision ou un contenu différent est refusé,
+sans écrasement, suppression ou activation. Aucune URL de connexion n'est affichée.
+Les schémas doivent déjà avoir été migrés explicitement.
+
+Pour consulter, configurer `TRAINING_DATABASE_URL` localement dans `.env.local`
+(ou dans l'environnement du processus) vers la même base non-production,
+puis lancer `pnpm dev`. Ouvrir `/fr/plan` ou `/en/plan`.
+Sans configuration, Plan affiche un état explicite ; une panne est distincte
+d'une base vide et d'une vraie 404. Une semaine invalide ou extérieure au plan
+revient à la première semaine avec un message. Aucun cache public n'est ajouté.
+
+Le build réussit sans variable PostgreSQL. Les tests du seed et des lectures font
+partie de `pnpm test` et `pnpm test:integration` (PostgreSQL local dédié réel).
+Après `pnpm build`, `pnpm test:plans:http` lance un serveur temporaire de production
+sur `127.0.0.1:3104`, connecté exclusivement à `TRAINING_TEST_DATABASE_URL`.
+Cette suite exige la même base locale vide jetable, applique le schéma et le seed,
+contrôle les routes, erreurs et statuts HTTP, puis nettoie les seuls objets créés.
+Ne pas l'exécuter simultanément avec les intégrations ou une autre application
+sur cette base. Elle ne cible ni Neon ni Vercel.
+La recette distante/Preview et iPhone du lot 4 reste à autoriser et à effectuer.
