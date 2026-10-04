@@ -96,14 +96,19 @@ cookie, jeton ou identifiant sensible dans le compte rendu.
 | --- | --- |
 | Offre et protection All Deployments | Activation confirmée par l'utilisateur ; offre non relevée |
 | Preview protégée ; URL/date | URL ci-dessus, 3 octobre 2026 ; accès anonyme redirigé HTTP 302 vers vercel.com |
-| Domaine production protégé | En attente |
+| Domaine production protégé | Demande de connexion Vercel confirmée par l'utilisateur le 4 octobre 2026 |
 | Safari connexion et retour | Réussite confirmée par l'utilisateur sur iPhone |
 | PWA connexion et retour | Réussite confirmée par l'utilisateur sur iPhone |
-| Persistance après fermeture et lendemain | Fermeture complète/réouverture validée ; lendemain en attente |
-| Expiration naturelle / perte de session / reconnexion | En attente, distinguer les trois |
+| Persistance après fermeture et lendemain | Fermeture complète/réouverture validée ; Preview toujours connectée le lendemain selon l'utilisateur (4 octobre 2026) |
+| Expiration naturelle / perte de session / reconnexion | Connexion sur production confirmée ; expiration naturelle et reconnexion après perte de session non observées |
 | Déconnexion et comportement des cookies existants | En attente |
 | Compte non autorisé et session anonyme bloqués | Navigation privée bloquée confirmée ; compte distinct sans accès en attente |
 | Décision Vercel Authentication / repli | Vercel Authentication conservée à ce stade ; fin de recette en attente |
+
+Le 4 octobre 2026, l'utilisateur confirme avoir vérifié les valeurs distinctes des
+connexions par environnement. La fenêtre Neon History window est de 6 heures,
+maximum disponible sur son offre (nom de l'offre non communiqué). Aucun changement
+d'offre n'est demandé. Les autres cas non observés restent explicitement en attente.
 
 Rapporter ici uniquement les observations. Si la PWA boucle, perd la session
 de façon inacceptable ou ne revient pas après connexion, le jalon est bloqué :

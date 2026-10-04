@@ -12,7 +12,8 @@ configurée par l'utilisateur, après son autorisation explicite. Le contrôle e
 lecture seule confirme les quatre tables, une migration enregistrée, une ligne
 applicative (id 1, révision 1, plan actif nul) et aucun plan enregistré.
 L'utilisateur indique avoir configuré les variables Vercel ; leur portée et
-la séparation effective des branches restent à confirmer dans les consoles.
+la séparation des connexions ont été confirmées par l'utilisateur le 4 octobre 2026.
+La fenêtre History window relevée est de 6 heures, maximum de son offre actuelle.
 Aucune ressource Neon/Vercel n'a été créée par ce chat. La recette d'accès iPhone est dans
 `V1_PRIVATE_ACCESS_CHECKLIST.md`. Aucun plan personnel ne doit être enregistré avant sa validation.
 

@@ -145,6 +145,15 @@ Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 1
 - Aucun dump ou exercice de restauration réalisé.
   Aucun push, PR ou fusion par ce chat. Le lot 3 reste décoché.
 
+Complément utilisateur du 4 octobre 2026 : Preview toujours connectée le lendemain,
+demande de connexion Vercel sur le domaine de production confirmée, valeurs des
+connexions séparées vérifiées par l'utilisateur et rétention Neon de 6 heures
+(maximum de son offre) relevée. Vercel Authentication reste retenue sans repli.
+L'expiration naturelle, la reconnexion après perte de session et les autres cas
+non observés de la checklist ne sont pas déclarés réussis ; le lot reste ouvert
+conformément aux critères initiaux. Les dumps restent mensuels et obligatoires
+avant une migration destructive ; l'exercice de restauration demeure au lot 12.
+
 ### Création dans l'application
 
 - [ ] Afficher un formulaire mobile-first demandant un nom, une date de début, une date de fin et une description facultative.
