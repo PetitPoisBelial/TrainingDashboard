@@ -620,6 +620,32 @@ Un seul menu change de disposition via CSS : barre fixe en bas sous 1000 px, bar
 
 ## Journal des décisions
 
+### Précisions de persistance du lot 3
+
+Le runtime Node.js par défaut utilise `pg` et Drizzle node-postgres pour les
+transactions interactives. Le pool est créé à la première utilisation, partagé
+en développement, limité et attaché au cycle Fluid Compute via `@vercel/functions`.
+Les modules de connexion et de transactions portent `server-only` ; aucun accès
+à PostgreSQL n'est ajouté aux pages dans ce lot.
+
+Les identifiants métier restent des colonnes texte opaques, conformément aux
+parseurs du lot 2 ; seul le bloc possède un UUID technique. Les volumes et allures
+utilisent `double precision` avec contraintes de positivité et de finitude pour
+préserver les décimales permises par le domaine. Les positions commencent à zéro,
+uniques par plan/jour et par séance. La lecture complète utilise un instantané
+`REPEATABLE READ READ ONLY`. Les écritures conditionnelles incrémentent la révision
+dans la même transaction que les enfants. La FK du plan actif est restrictive :
+la suppression future devra vider l'état et incrémenter sa révision explicitement.
+
+Les migrations et l'initialisation idempotente de la ligne applicative sont des
+commandes opérateur explicites. Les tests d'intégration n'acceptent qu'une base
+locale vide nommée `training_dashboard_test` ; ils ne peuvent pas utiliser les
+connexions applicatives ou Neon. Le [runbook](docs/V1_DATABASE_RUNBOOK.md) décrit
+les garanties du domaine et de la base ainsi que les opérations manuelles.
+La disponibilité actuelle de Vercel Authentication pour la production sur toutes
+les offres ne dispense pas de sélectionner All Deployments ni de valider l'iPhone.
+La [recette](docs/V1_PRIVATE_ACCESS_CHECKLIST.md) reste en attente.
+
 Toute décision structurante doit être ajoutée ici avec sa date, son contexte et sa justification.
 
 | Date | Décision | Statut |
