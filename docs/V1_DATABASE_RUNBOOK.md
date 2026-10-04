@@ -2,6 +2,11 @@
 
 ## État du lot 3
 
+Lot validé par l'utilisateur le 4 octobre 2026. Vercel Authentication est retenue ;
+les observations complémentaires de session sont reportées au fil de l'eau sur
+sa décision explicite. Les migrations Preview/production restent à autoriser
+séparément avant la première utilisation de ces bases.
+
 Fondation implémentée : schéma Drizzle, migration SQL versionnée, client Node.js serveur,
 mappings purs et primitives transactionnelles. Aucune page n'utilise PostgreSQL.
 Les tests PostgreSQL ont été exécutés sur une base locale dédiée vide : 10 tests

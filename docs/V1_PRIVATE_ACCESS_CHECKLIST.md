@@ -2,12 +2,15 @@
 
 ## État
 
-**Recette partiellement validée le 3 octobre 2026.** L'utilisateur confirme
+**Lot 3 validé par l'utilisateur le 4 octobre 2026.** L'utilisateur confirme
 l'activation de la protection, la connexion dans Safari et la PWA sur iPhone,
 la persistance après fermeture complète/réouverture et le blocage en navigation
 privée sur la Preview. Le chat a vérifié une redirection HTTP anonyme 302 vers
 vercel.com. Vercel Authentication reste retenue ; aucun besoin de repli n'est
-observé à ce stade. Les autres points de recette restent en attente.
+observé. Le 4 octobre 2026, l'utilisateur accepte explicitement de suivre les
+cas de session et autres observations non réalisés au fil de l'eau, sans bloquer
+la clôture du lot 3. Les cases non cochées ci-dessous restent des observations
+à effectuer ; elles ne sont pas présentées comme des tests réussis.
 Preview testée : https://training-dashboard-qdkwymvmd-petitpoisbelial.vercel.app/fr.
 Les pages affichent toujours les fixtures V0 ; cette branche n'ajoute aucune
 lecture de données privées ni mutation accessible depuis le navigateur.
@@ -103,16 +106,18 @@ cookie, jeton ou identifiant sensible dans le compte rendu.
 | Expiration naturelle / perte de session / reconnexion | Connexion sur production confirmée ; expiration naturelle et reconnexion après perte de session non observées |
 | Déconnexion et comportement des cookies existants | En attente |
 | Compte non autorisé et session anonyme bloqués | Navigation privée bloquée confirmée ; compte distinct sans accès en attente |
-| Décision Vercel Authentication / repli | Vercel Authentication conservée à ce stade ; fin de recette en attente |
+| Décision Vercel Authentication / repli | Vercel Authentication conservée ; lot 3 validé le 4 octobre 2026 avec observations complémentaires différées par l'utilisateur |
 
 Le 4 octobre 2026, l'utilisateur confirme avoir vérifié les valeurs distinctes des
 connexions par environnement. La fenêtre Neon History window est de 6 heures,
 maximum disponible sur son offre (nom de l'offre non communiqué). Aucun changement
-d'offre n'est demandé. Les autres cas non observés restent explicitement en attente.
+d'offre n'est demandé. Les autres cas non observés seront suivis au fil de l'eau,
+selon la décision explicite de l'utilisateur du 4 octobre 2026.
 
 Rapporter ici uniquement les observations. Si la PWA boucle, perd la session
 de façon inacceptable ou ne revient pas après connexion, le jalon est bloqué :
 documenter le résultat et demander la validation du repli Supabase Auth avant
-de changer l'architecture. Ne pas cocher le lot 3 et ne pas saisir de données
-personnelles tant que l'accès privé et la séparation des environnements ne sont
-pas confirmés.
+de changer l'architecture. L'accès privé et la séparation des environnements ont
+été confirmés par l'utilisateur ; le lot 3 est clôturé avec le report explicite
+des observations restantes. Toute régression d'accès devra être examinée avant
+de poursuivre l'utilisation de données privées.

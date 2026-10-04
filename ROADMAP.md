@@ -78,7 +78,7 @@ Obtenir une PWA mobile-first utilisable sur iPhone pour consulter la semaine et 
 
 ## V1 — Gestion des plans
 
-**Statut : lot 2 fusionné dans main ; lot 3 en cours, fondation locale implémentée, validations PostgreSQL et externes en attente.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
+**Statut : lot 2 fusionné dans main ; lot 3 validé par l'utilisateur le 4 octobre 2026. Prochain jalon : lot 4 — Lecture verticale des plans.** Les décisions détaillées figurent dans `docs/V1_PLANS_DESIGN.md`. Chaque lot d'implémentation doit rester utilisable et vérifiable après sa fusion.
 
 ### Objectif
 
@@ -104,7 +104,7 @@ Les lots sont ordonnés. Chaque PR dépend uniquement des lots précédents déj
 
 1. [x] **Architecture documentaire** — enregistrer les décisions, critères d'acceptation, flux, routes, schéma logique, risques et ordre des lots.
 2. [x] **Domaine et validation** — finaliser `TrainingPlan`, étendre les types Training, ajouter les invariants, projections, erreurs typées et tests purs, sans interface ni persistance.
-3. [ ] **Accès privé et persistance** — valider Vercel Authentication dans Safari et la PWA iOS, créer la base de développement, le schéma, les migrations, les transactions, les révisions, la séparation Preview/production et le premier runbook de sauvegarde.
+3. [x] **Accès privé et persistance** — valider Vercel Authentication dans Safari et la PWA iOS, créer la base de développement, le schéma, les migrations, les transactions, les révisions, la séparation Preview/production et le premier runbook de sauvegarde.
 4. [ ] **Lecture verticale des plans** — persister des données de développement puis livrer la liste, l'état vide, le détail, les semaines, les chargements, les erreurs et les 404.
 5. [ ] **Création minimale** — créer un plan inactif à partir d'un nom, d'une période et d'une description facultative.
 6. [ ] **Activation et dashboard** — gérer l'unique plan actif, confirmer son remplacement et alimenter le dashboard avec une projection `TrainingWeek`.
@@ -143,15 +143,18 @@ Le lot 3 inclut la sauvegarde minimale avant toute donnée personnelle. Le lot 1
   l'utilisateur. Persistance le lendemain, expiration et reconnexion restent
   en attente ; aucun besoin de repli observé à ce stade.
 - Aucun dump ou exercice de restauration réalisé.
-  Aucun push, PR ou fusion par ce chat. Le lot 3 reste décoché.
+  Aucun push, PR ou fusion par ce chat. Push et ouverture d'une PR réalisés par l'utilisateur.
 
 Complément utilisateur du 4 octobre 2026 : Preview toujours connectée le lendemain,
 demande de connexion Vercel sur le domaine de production confirmée, valeurs des
 connexions séparées vérifiées par l'utilisateur et rétention Neon de 6 heures
 (maximum de son offre) relevée. Vercel Authentication reste retenue sans repli.
 L'expiration naturelle, la reconnexion après perte de session et les autres cas
-non observés de la checklist ne sont pas déclarés réussis ; le lot reste ouvert
-conformément aux critères initiaux. Les dumps restent mensuels et obligatoires
+non observés de la checklist ne sont pas déclarés réussis. L'utilisateur a
+explicitement accepté leur suivi au fil de l'eau et validé la clôture du lot 3
+le 4 octobre 2026 : ces contrôles différés ne bloquent plus le passage au lot 4.
+Les migrations Preview/production restent des opérations explicites, à autoriser
+avant la première utilisation de ces bases. Les dumps restent mensuels et obligatoires
 avant une migration destructive ; l'exercice de restauration demeure au lot 12.
 
 ### Création dans l'application
@@ -206,7 +209,7 @@ avant une migration destructive ; l'exercice de restauration demeure au lot 12.
 ### Validation
 
 - [ ] Vérifier qu'un utilisateur non autorisé ne peut ni consulter, ni modifier, ni importer, ni exporter les plans.
-- [ ] Vérifier l'authentification, l'expiration de session et la reconnexion dans Safari iOS et dans la PWA installée avant toute donnée réelle.
+- [ ] Compléter au fil de l'eau la vérification de l'expiration de session et de la reconnexion dans Safari iOS et la PWA ; authentification validée au lot 3, report accepté par l'utilisateur le 4 octobre 2026.
 - [ ] Vérifier les transitions de statut aux dates de début et de fin.
 - [ ] Vérifier que plusieurs plans peuvent coexister mais qu'un seul est actif.
 - [ ] Distinguer aucun plan actif, date hors période, semaine de repos et semaine contenant des séances.
@@ -276,7 +279,7 @@ Faire émerger les tendances utiles sans transformer l'application en clone de S
 
 ## Prochaine décision
 
-La V0 est clôturée et le lot 2 est fusionné. Le jalon courant est la validation réelle du lot 3 : PostgreSQL dédié puis configuration Neon/Vercel et recette d'accès privé. Une Preview des fixtures peut servir au test d'authentification ; le premier déploiement connecté à PostgreSQL restera bloqué tant que Vercel Authentication n'aura pas été validée dans Safari iOS et dans la PWA installée. Le lot 4 ne commence pas avant cette clôture. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
+La V0 est clôturée, le lot 2 est fusionné et le lot 3 est validé par l'utilisateur le 4 octobre 2026. Le prochain jalon est le lot 4 — Lecture verticale des plans, après revue et fusion de la branche du lot 3. Vercel Authentication est conservée ; les observations complémentaires de session seront suivies au fil de l'eau conformément à la décision de l'utilisateur. Les pages Activités et Analyses restent des placeholders ; Strava demeure en V2.
 
 Validation du lot 2 le 3 octobre 2026 : 32 tests purs réussis (16 nouveaux et 16 existants), vérification TypeScript, lint et build de production réussis. Le domaine couvre les identifiants opaques, les dates ISO valides, les invariants du plan et des séances, les changements de période, les statuts explicites, les semaines complètes ou partielles, les semaines de repos et les totaux séparés. Les fixtures et la source du dashboard V0 sont préservées ; seule la lecture de la récupération est adaptée à son objet structuré. Aucune dépendance, persistance, interface de gestion ou fonctionnalité des lots suivants n'est ajoutée.
 
